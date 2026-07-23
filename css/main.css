@@ -1726,12 +1726,18 @@ strong {
 }
 
 .testimonials-marquee__track.is-marquee-ready {
-  animation: testimonialsMarquee var(--marquee-duration, 24s) linear infinite;
+  animation: testimonialsMarquee var(--marquee-duration, 48s) linear infinite;
+}
+
+.testimonials-marquee__viewport:has(.testimonial-card:hover) .testimonials-marquee__track.is-marquee-ready,
+.testimonials-marquee__track.is-marquee-ready.is-marquee-paused {
+  animation-play-state: paused;
 }
 
 .testimonials-marquee__track .testimonial-card {
   flex: 0 0 min(300px, 82vw);
   scroll-snap-align: unset;
+  touch-action: pan-y;
 }
 
 @keyframes testimonialsMarquee {
@@ -2038,12 +2044,6 @@ strong {
 
 .pricing-card__installments {
   display: block;
-  font-size: 0.85rem;
-  color: var(--text-muted);
-}
-
-.pricing-card__amount {
-  display: block;
   font-family: var(--font-display);
   font-size: clamp(2.5rem, 5vw, 3.5rem);
   font-weight: 800;
@@ -2052,6 +2052,13 @@ strong {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   line-height: 1.1;
+}
+
+.pricing-card__amount {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin-top: 0.35rem;
 }
 
 .pricing-card__cash {

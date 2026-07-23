@@ -710,6 +710,36 @@
   }
 
   /* ── Testimonials auto-scroll (marquee) ── */
+  function bindTestimonialsMarqueePause() {
+    const track = document.getElementById('testimonialsTrack');
+    if (!track || track.dataset.pauseBound === '1') return;
+    track.dataset.pauseBound = '1';
+
+    let pauseDepth = 0;
+
+    function pauseMarquee() {
+      pauseDepth += 1;
+      track.classList.add('is-marquee-paused');
+    }
+
+    function resumeMarquee() {
+      pauseDepth = Math.max(0, pauseDepth - 1);
+      if (pauseDepth === 0) track.classList.remove('is-marquee-paused');
+    }
+
+    track.addEventListener('pointerover', (e) => {
+      if (e.target.closest('.testimonial-card')) pauseMarquee();
+    });
+
+    track.addEventListener('pointerout', (e) => {
+      const card = e.target.closest('.testimonial-card');
+      if (!card) return;
+      const related = e.relatedTarget;
+      if (related && card.contains(related)) return;
+      resumeMarquee();
+    });
+  }
+
   function initTestimonialsMarquee() {
     const track = document.getElementById('testimonialsTrack');
     if (!track) return;
@@ -732,11 +762,12 @@
       track.appendChild(clone);
     });
 
-    track.style.setProperty('--marquee-duration', `${Math.max(cards.length * 7, 18)}s`);
+    track.style.setProperty('--marquee-duration', `${Math.max(cards.length * 12, 36)}s`);
     track.classList.add('is-marquee-ready');
     window.PM_initCountUps?.();
   }
 
+  bindTestimonialsMarqueePause();
   initTestimonialsMarquee();
   window.addEventListener('cms:applied', initTestimonialsMarquee);
 

@@ -156,7 +156,7 @@ export default {
     oldPrice: '297',
     currentPrice: '97,00',
     installments: '12x de R$ 10,03',
-    stickyPrice: '12x R$ 10,03',
+    stickyPrice: '12x de R$ 10,03',
     discountPercent: 67,
     guaranteeDays: 7,
     guaranteeText: 'Você tem 7 dias para testar o método. Se não aprender a criar cortes de alta retenção ou não gostar do conteúdo, devolvemos 100% do seu dinheiro. Sem perguntas.',
