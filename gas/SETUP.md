@@ -48,8 +48,14 @@ Faça commit + push (deploy automático no GitHub Pages).
 2. Login padrão:
    - E-mail: `mitplay10@gmail.com`
    - Senha: `mitgold`
-3. Edite o JSON → **Salvar e publicar**
+3. Edite no painel visual → **Salvar alterações**
 4. O site atualiza na próxima visita (sem redeploy)
+
+### Atualizar o painel admin (após mudanças no código)
+
+Ver **`gas/DEPLOY-ADMIN.md`** — resumo: colar `gas/Admin.html` no arquivo `Admin` do GAS e fazer **Implantar → Gerenciar implantações → Nova versão**. Só salvar o arquivo não basta.
+
+O `Admin.html` do build tem ~240 KB em ~86 linhas (JS/CSS minificados). Busque `PM-ADMIN-BUILD:` no GAS para confirmar que colou a versão certa.
 
 ## URLs úteis
 

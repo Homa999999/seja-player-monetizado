@@ -23,8 +23,36 @@ if (!fs.existsSync(distIndex)) {
 }
 
 let html = fs.readFileSync(distIndex, 'utf8');
+const buildStamp = new Date().toISOString();
+const buildBanner = `<!--
+  PM-ADMIN-BUILD: ${buildStamp}
+  Copie ESTE arquivo inteiro para o GAS (arquivo Admin).
+  Depois: Implantar > Gerenciar implantacoes > Nova versao > Implantar.
+-->`;
+if (!html.includes('PM-ADMIN-BUILD:')) {
+  html = html.replace('<!DOCTYPE html>', `<!DOCTYPE html>\n${buildBanner}`);
+}
 if (!html.includes('<base target="_top">')) {
   html = html.replace('<head>', '<head>\n  <base target="_top">');
+}
+html = html.replace(
+  /content="width=device-width, initial-scale=1\.0(?:, viewport-fit=cover)?"/,
+  'content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"'
+);
+if (!html.includes('viewport-fit=cover')) {
+  html = html.replace(
+    'name="viewport"',
+    'name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, viewport-fit=cover"'
+  );
+}
+const viewportFixScript = `<script>
+(function(){var sw=window.screen&&window.screen.width,iw=window.innerWidth;if(sw&&iw>sw+40){var m=document.querySelector('meta[name="viewport"]');if(m)m.setAttribute('content','width='+sw+', initial-scale=1, maximum-scale=5, viewport-fit=cover');}})();
+</script>`;
+if (!html.includes('iw>sw+40')) {
+  html = html.replace(
+    /(<meta name="viewport"[^>]*>)/i,
+    `$1\n  ${viewportFixScript}`
+  );
 }
 
 fs.writeFileSync(gasAdmin, html);

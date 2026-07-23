@@ -6,6 +6,8 @@ import Logo from './Logo';
 import Icon from './Icon';
 import PageTransition from './PageTransition';
 
+const ADMIN_BUILD_ID = typeof __ADMIN_BUILD_ID__ !== 'undefined' ? __ADMIN_BUILD_ID__ : 'local';
+
 const NAV_GROUPS = [
   {
     label: 'Visão geral',
@@ -37,20 +39,77 @@ const NAV_GROUPS = [
   }
 ];
 
-function useIsMobile(breakpoint = 900) {
+function useIsMobile() {
+  function checkMobile() {
+    const touch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const noHover = window.matchMedia('(hover: none)').matches;
+    if (touch && (coarse || noHover)) return true;
+
+    const width = window.visualViewport?.width ?? window.innerWidth;
+    return width <= 900;
+  }
+
   const [isMobile, setIsMobile] = useState(() =>
-    typeof window !== 'undefined' && window.matchMedia(`(max-width: ${breakpoint}px)`).matches
+    typeof window !== 'undefined' && checkMobile()
   );
 
   useEffect(() => {
-    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
-    const update = () => setIsMobile(mq.matches);
+    const update = () => setIsMobile(checkMobile());
     update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, [breakpoint]);
+    window.addEventListener('resize', update);
+    window.addEventListener('orientationchange', update);
+    window.visualViewport?.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('resize', update);
+      window.removeEventListener('orientationchange', update);
+      window.visualViewport?.removeEventListener('resize', update);
+    };
+  }, []);
 
   return isMobile;
+}
+
+function useFixMobileViewport(isMobile) {
+  useEffect(() => {
+    if (!isMobile) {
+      document.documentElement.removeAttribute('data-vp-broken');
+      document.documentElement.style.removeProperty('--vp-fix-scale');
+      return;
+    }
+
+    const apply = () => {
+      const screenW = window.screen.width;
+      const meta = document.querySelector('meta[name="viewport"]');
+      let layoutW = window.innerWidth;
+
+      if (layoutW > screenW + 40 && meta) {
+        meta.setAttribute(
+          'content',
+          `width=${Math.round(screenW)}, initial-scale=1, maximum-scale=5, viewport-fit=cover`
+        );
+      }
+
+      layoutW = window.innerWidth;
+      if (layoutW > screenW + 40) {
+        document.documentElement.dataset.vpBroken = '1';
+        document.documentElement.style.setProperty('--vp-fix-scale', String(layoutW / screenW));
+      } else {
+        document.documentElement.removeAttribute('data-vp-broken');
+        document.documentElement.style.removeProperty('--vp-fix-scale');
+      }
+    };
+
+    apply();
+    const timer = window.setTimeout(apply, 150);
+    window.addEventListener('orientationchange', apply);
+    window.visualViewport?.addEventListener('resize', apply);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener('orientationchange', apply);
+      window.visualViewport?.removeEventListener('resize', apply);
+    };
+  }, [isMobile]);
 }
 
 export default function AdminLayout() {
@@ -59,6 +118,7 @@ export default function AdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const isMobile = useIsMobile();
+  useFixMobileViewport(isMobile);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const closeSidebar = () => setSidebarOpen(false);
@@ -73,14 +133,18 @@ export default function AdminLayout() {
   }, [isMobile]);
 
   useEffect(() => {
+    document.documentElement.classList.toggle('admin-is-mobile', isMobile);
     document.body.classList.toggle('admin-no-scroll', isMobile && sidebarOpen);
-    return () => document.body.classList.remove('admin-no-scroll');
+    return () => {
+      document.documentElement.classList.remove('admin-is-mobile');
+      document.body.classList.remove('admin-no-scroll');
+    };
   }, [isMobile, sidebarOpen]);
 
   const sidebarHidden = isMobile && !sidebarOpen;
 
   return (
-    <div className="admin-shell">
+    <div className={`admin-shell${isMobile ? ' admin-shell--mobile' : ''}`}>
       {isMobile && sidebarOpen && (
         <button
           type="button"
@@ -139,6 +203,11 @@ export default function AdminLayout() {
           <button type="button" className="btn btn--ghost btn--sm btn--block" onClick={() => { logout(); navigate('/login'); }}>
             <Icon name="right-from-bracket" /> Sair
           </button>
+          {ADMIN_BUILD_ID !== 'local' && (
+            <p className="admin-build-id" title="Versão do CMS — confirme se o deploy no GAS está atualizado">
+              Build {ADMIN_BUILD_ID.slice(0, 10)}
+            </p>
+          )}
         </div>
       </aside>
 
