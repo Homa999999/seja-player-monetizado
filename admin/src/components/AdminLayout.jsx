@@ -37,62 +37,76 @@ const NAV_GROUPS = [
   }
 ];
 
+function useIsMobile(breakpoint = 900) {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia(`(max-width: ${breakpoint}px)`).matches
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${breakpoint}px)`);
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, [breakpoint]);
+
+  return isMobile;
+}
+
 export default function AdminLayout() {
   const { user, logout } = useAuth();
   const { saving, isDirty, lastSaved } = useContent();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const closeSidebar = () => setSidebarOpen(false);
+  const toggleSidebar = () => setSidebarOpen((open) => !open);
 
   useEffect(() => {
     setSidebarOpen(false);
   }, [location.pathname]);
 
   useEffect(() => {
-    document.body.classList.toggle('admin-sidebar-open', sidebarOpen);
-    return () => document.body.classList.remove('admin-sidebar-open');
-  }, [sidebarOpen]);
+    if (!isMobile) setSidebarOpen(false);
+  }, [isMobile]);
 
   useEffect(() => {
-    function onResize() {
-      if (window.innerWidth > 900) setSidebarOpen(false);
-    }
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
+    document.body.classList.toggle('admin-no-scroll', isMobile && sidebarOpen);
+    return () => document.body.classList.remove('admin-no-scroll');
+  }, [isMobile, sidebarOpen]);
+
+  const sidebarHidden = isMobile && !sidebarOpen;
 
   return (
-    <div className={`admin-shell${sidebarOpen ? ' admin-shell--sidebar-open' : ''}`}>
-      <button
-        type="button"
-        className="sidebar-edge-toggle"
-        onClick={() => setSidebarOpen(true)}
-        aria-label="Abrir menu"
-        aria-expanded={sidebarOpen}
+    <div className="admin-shell">
+      {isMobile && sidebarOpen && (
+        <button
+          type="button"
+          className="sidebar-backdrop"
+          aria-label="Fechar menu"
+          onClick={closeSidebar}
+        />
+      )}
+
+      <aside
+        className={`admin-sidebar${sidebarHidden ? ' admin-sidebar--hidden' : ''}`}
+        aria-hidden={sidebarHidden}
       >
-        <Icon name="chevron-right" />
-      </button>
-
-      <button
-        type="button"
-        className="sidebar-backdrop"
-        aria-label="Fechar menu"
-        onClick={() => setSidebarOpen(false)}
-        tabIndex={sidebarOpen ? 0 : -1}
-      />
-
-      <aside className={`admin-sidebar${sidebarOpen ? ' is-open' : ''}`}>
         <div className="admin-sidebar__head">
           <Logo size="sm" />
           <span className="admin-sidebar__badge"><Icon name="shield-halved" /> CMS</span>
-          <button
-            type="button"
-            className="sidebar-close-btn"
-            onClick={() => setSidebarOpen(false)}
-            aria-label="Fechar menu"
-          >
-            <Icon name="chevron-left" />
-          </button>
+          {isMobile && (
+            <button
+              type="button"
+              className="sidebar-close-btn"
+              onClick={closeSidebar}
+              aria-label="Fechar menu"
+            >
+              <Icon name="chevron-left" />
+            </button>
+          )}
         </div>
         <nav className="admin-nav">
           {NAV_GROUPS.map((group) => (
@@ -105,7 +119,7 @@ export default function AdminLayout() {
                   end={item.end}
                   className={({ isActive }) => `admin-nav__link${isActive ? ' is-active' : ''}`}
                   style={{ animationDelay: `${i * 24}ms` }}
-                  onClick={() => setSidebarOpen(false)}
+                  onClick={closeSidebar}
                 >
                   <span className="admin-nav__icon"><Icon name={item.icon} /></span>
                   {item.label}
@@ -132,31 +146,33 @@ export default function AdminLayout() {
         <div className="admin-main__mesh" aria-hidden="true" />
         <header className="admin-topbar">
           <div className="admin-topbar__start">
-            <button
-              type="button"
-              className="sidebar-toggle btn btn--ghost btn--icon"
-              onClick={() => setSidebarOpen((open) => !open)}
-              aria-label={sidebarOpen ? 'Fechar menu' : 'Abrir menu'}
-              aria-expanded={sidebarOpen}
-            >
-              <Icon name={sidebarOpen ? 'chevron-left' : 'chevron-right'} />
-            </button>
+            {isMobile && (
+              <button
+                type="button"
+                className="sidebar-toggle btn btn--ghost btn--icon"
+                onClick={toggleSidebar}
+                aria-label={sidebarOpen ? 'Fechar menu' : 'Abrir menu'}
+                aria-expanded={sidebarOpen}
+              >
+                <Icon name={sidebarOpen ? 'chevron-left' : 'chevron-right'} />
+              </button>
+            )}
             <div className="admin-topbar__status">
-            {saving && (
-              <span className="status-pill status-pill--saving">
-                <Icon name="spinner" className="fa-spin" /> Salvando...
-              </span>
-            )}
-            {!saving && isDirty && (
-              <span className="status-pill status-pill--dirty">
-                <Icon name="circle-exclamation" /> Alterações não salvas
-              </span>
-            )}
-            {!saving && !isDirty && lastSaved && (
-              <span className="status-pill status-pill--saved">
-                <Icon name="circle-check" /> Salvo
-              </span>
-            )}
+              {saving && (
+                <span className="status-pill status-pill--saving">
+                  <Icon name="spinner" className="fa-spin" /> Salvando...
+                </span>
+              )}
+              {!saving && isDirty && (
+                <span className="status-pill status-pill--dirty">
+                  <Icon name="circle-exclamation" /> Alterações não salvas
+                </span>
+              )}
+              {!saving && !isDirty && lastSaved && (
+                <span className="status-pill status-pill--saved">
+                  <Icon name="circle-check" /> Salvo
+                </span>
+              )}
             </div>
           </div>
         </header>

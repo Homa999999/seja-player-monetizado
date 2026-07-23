@@ -189,7 +189,6 @@ button, input, textarea { font: inherit; }
 }
 
 .sidebar-toggle,
-.sidebar-edge-toggle,
 .sidebar-close-btn,
 .sidebar-backdrop {
   display: none;
@@ -200,6 +199,10 @@ button, input, textarea { font: inherit; }
 .sidebar-toggle {
   position: relative;
   z-index: 120;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
 }
 
 .sidebar-close-btn {
@@ -775,36 +778,9 @@ button, input, textarea { font: inherit; }
 
 .loading-state__icon, .empty-state__icon { font-size: 2rem; opacity: .4; }
 @media (max-width: 900px) {
-  .admin-sidebar {
-    animation: none !important;
-    transform: translate3d(-100%, 0, 0) !important;
-    box-shadow: 8px 0 32px rgba(0, 0, 0, .35);
-    will-change: transform;
-    pointer-events: none;
-    visibility: hidden;
-  }
-
-  .admin-sidebar.is-open {
-    transform: translate3d(0, 0, 0) !important;
-    pointer-events: auto;
-    visibility: visible;
-  }
-
-  .admin-topbar {
-    z-index: 110;
-  }
-
   .sidebar-toggle,
-  .sidebar-edge-toggle,
   .sidebar-close-btn {
     display: inline-flex;
-  }
-
-  .sidebar-toggle {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    flex-shrink: 0;
   }
 
   .sidebar-backdrop {
@@ -817,55 +793,33 @@ button, input, textarea { font: inherit; }
     margin: 0;
     background: rgba(3, 6, 12, .62);
     backdrop-filter: blur(2px);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity .3s var(--ease);
     cursor: pointer;
   }
 
-  .admin-shell--sidebar-open .sidebar-backdrop {
-    opacity: 1;
-    pointer-events: auto;
+  .admin-sidebar {
+    box-shadow: 8px 0 32px rgba(0, 0, 0, .35);
+    transition: transform .3s var(--ease), visibility .3s var(--ease);
   }
 
-  .sidebar-edge-toggle {
-    position: fixed;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 120;
-    width: 28px;
-    height: 56px;
-    border: 1px solid var(--border);
-    border-left: none;
-    border-radius: 0 10px 10px 0;
-    background: var(--bg-elevated);
-    color: var(--primary);
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, .25);
-    transition: background .2s, color .2s, opacity .2s, transform .2s;
-  }
-
-  .sidebar-edge-toggle:hover {
-    background: var(--bg-card);
-    color: var(--text);
-  }
-
-  .admin-shell--sidebar-open .sidebar-edge-toggle {
-    opacity: 0;
+  /* Fechada no mobile: só quando tem a classe --hidden */
+  .admin-sidebar.admin-sidebar--hidden {
+    transform: translateX(-100%);
+    visibility: hidden;
     pointer-events: none;
-    transform: translate(-100%, -50%);
+  }
+
+  .admin-topbar {
+    z-index: 110;
+    padding: 0 1rem;
+    gap: .75rem;
   }
 
   .admin-main { margin-left: 0; }
   .admin-main__mesh { left: 0; }
   .save-bar { left: 0; }
 
-  .admin-topbar {
-    padding: 0 1rem;
-    gap: .75rem;
+  .admin-nav__link {
+    animation: none;
   }
 
   .admin-content {
@@ -964,7 +918,7 @@ button, input, textarea { font: inherit; }
     transform: translateX(22px);
   }
 
-  body.admin-sidebar-open {
+  body.admin-no-scroll {
     overflow: hidden;
   }
 }
