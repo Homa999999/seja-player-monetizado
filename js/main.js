@@ -596,11 +596,12 @@
   /* ── Subtle parallax on hero glows ── */
   /* handled in unified scroll loop above */
 
-  /* ── VTurb player (carrega só ao clicar no vídeo) ── */
+  /* ── VTurb player (carrega e inicia automaticamente) ── */
   const VSL_PLAYER_SRC = 'https://scripts.converteai.net/c4d8dc09-d14e-4c12-94a3-b57ca9ac174a/players/6a0911f9f38f377fba3e82ea/v4/player.js';
   const heroVsl = document.getElementById('heroVsl');
   const vslFacade = document.getElementById('vslFacade');
   let vslLoaded = false;
+  let vslPlaybackBound = false;
 
   function loadVslPlayer() {
     if (vslLoaded) return Promise.resolve();
@@ -627,14 +628,58 @@
     });
   }
 
+  function startVslPlayback() {
+    if (vslPlaybackBound) return;
+    vslPlaybackBound = true;
+
+    const tryPlay = () => {
+      const instance = window.smartplayer?.instances?.[0];
+      if (!instance) return false;
+
+      if (typeof instance.play === 'function') {
+        const result = instance.play();
+        if (result?.catch) result.catch(() => {});
+        return true;
+      }
+
+      if (instance.video) {
+        instance.video.muted = true;
+        const result = instance.video.play();
+        if (result?.catch) result.catch(() => {});
+        return true;
+      }
+
+      return false;
+    };
+
+    if (tryPlay()) return;
+
+    const player = document.querySelector('vturb-smartplayer');
+    if (!player) return;
+
+    player.addEventListener('player:ready', () => {
+      if (!tryPlay()) {
+        let attempts = 0;
+        const poll = () => {
+          if (tryPlay() || attempts >= 10) return;
+          attempts += 1;
+          setTimeout(poll, 500);
+        };
+        poll();
+      }
+    }, { once: true });
+  }
+
   async function activateVsl() {
     if (!heroVsl) return;
     heroVsl.classList.add('is-active');
     await loadVslPlayer();
+    startVslPlayback();
   }
 
-  if (vslFacade && heroVsl) {
-    vslFacade.addEventListener('click', activateVsl);
+  if (heroVsl) {
+    if (vslFacade) vslFacade.addEventListener('click', activateVsl);
+    activateVsl();
   }
 
   /* ── Testimonials auto-scroll (marquee) ── */
