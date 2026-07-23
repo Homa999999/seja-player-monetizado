@@ -1,4 +1,5 @@
 import { createPortal } from 'react-dom';
+import { Link } from 'react-router-dom';
 import Icon from './Icon';
 
 export function SaveBar({ isDirty, saving, onSave, onDiscard, label = 'Salvar alterações' }) {
@@ -49,10 +50,20 @@ export function SaveBar({ isDirty, saving, onSave, onDiscard, label = 'Salvar al
   return mount ? createPortal(bar, mount) : bar;
 }
 
-export function PageHeader({ title, description, action, icon }) {
+export function PageHeader({ title, description, action, icon, breadcrumb }) {
   return (
     <div className="page-header animate-in">
       <div className="page-header__text">
+        {breadcrumb?.length > 0 && (
+          <nav className="breadcrumb" aria-label="Breadcrumb">
+            {breadcrumb.map((item, i) => (
+              <span key={item.label} className="breadcrumb__item">
+                {i > 0 && <Icon name="chevron-right" className="breadcrumb__sep" />}
+                {item.to ? <Link to={item.to}>{item.label}</Link> : <span>{item.label}</span>}
+              </span>
+            ))}
+          </nav>
+        )}
         {icon && <span className="page-header__icon"><Icon name={icon} /></span>}
         <div>
           <h1>{title}</h1>
@@ -102,6 +113,77 @@ export function Input({ value, onChange, icon, ...props }) {
 
 export function Textarea({ value, onChange, rows = 4, ...props }) {
   return <textarea className="input input--textarea" value={value ?? ''} onChange={onChange} rows={rows} {...props} />;
+}
+
+export function Switch({ checked, onChange, label, description }) {
+  return (
+    <label className="toggle">
+      <input type="checkbox" checked={!!checked} onChange={(e) => onChange(e.target.checked)} />
+      <span className="toggle__track"><span className="toggle__thumb" /></span>
+      <span className="toggle__copy">
+        <strong>{label}</strong>
+        {description && <small>{description}</small>}
+      </span>
+    </label>
+  );
+}
+
+export function ColorInput({ value, onChange, label }) {
+  const color = value || '#10b981';
+  return (
+    <div className="color-field">
+      <input type="color" value={color} onChange={(e) => onChange(e.target.value)} aria-label={label || 'Cor'} />
+      <Input value={color} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+export function SortableList({ items, onReorder, renderItem, keyFn = (item, i) => item.id || i }) {
+  function handleDragStart(e, index) {
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+    e.currentTarget.classList.add('is-dragging');
+  }
+
+  function handleDragEnd(e) {
+    e.currentTarget.classList.remove('is-dragging');
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }
+
+  function handleDrop(e, dropIndex) {
+    e.preventDefault();
+    const from = Number(e.dataTransfer.getData('text/plain'));
+    if (Number.isNaN(from) || from === dropIndex) return;
+    const next = [...items];
+    const [moved] = next.splice(from, 1);
+    next.splice(dropIndex, 0, moved);
+    onReorder(next);
+  }
+
+  return (
+    <div className="sortable-list">
+      {items.map((item, index) => (
+        <div
+          key={keyFn(item, index)}
+          className="sortable-list__item"
+          draggable
+          onDragStart={(e) => handleDragStart(e, index)}
+          onDragEnd={handleDragEnd}
+          onDragOver={handleDragOver}
+          onDrop={(e) => handleDrop(e, index)}
+        >
+          <button type="button" className="sortable-list__handle" aria-label="Arrastar para reordenar" tabIndex={-1}>
+            <Icon name="grip-vertical" />
+          </button>
+          <div className="sortable-list__body">{renderItem(item, index)}</div>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 export function ConfirmModal({ open, title, message, onConfirm, onCancel }) {

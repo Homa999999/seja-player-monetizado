@@ -5,17 +5,35 @@ import Logo from './Logo';
 import Icon from './Icon';
 import PageTransition from './PageTransition';
 
-const NAV = [
-  { to: '/', label: 'Dashboard', icon: 'chart-pie' },
-  { to: '/hero', label: 'Hero', icon: 'rocket' },
-  { to: '/curso', label: 'Sobre o Curso', icon: 'graduation-cap' },
-  { to: '/modulos', label: 'Módulos', icon: 'layer-group' },
-  { to: '/professor', label: 'Professor', icon: 'user-tie' },
-  { to: '/depoimentos', label: 'Depoimentos', icon: 'star' },
-  { to: '/oferta', label: 'Oferta', icon: 'tags' },
-  { to: '/botoes', label: 'Botões', icon: 'cart-shopping' },
-  { to: '/configuracoes', label: 'Configurações', icon: 'gear' },
-  { to: '/historico', label: 'Histórico', icon: 'clock-rotate-left' }
+const NAV_GROUPS = [
+  {
+    label: 'Visão geral',
+    items: [
+      { to: '/', label: 'Dashboard', icon: 'chart-pie', end: true }
+    ]
+  },
+  {
+    label: 'Landing page',
+    items: [
+      { to: '/hero', label: 'Hero', icon: 'rocket' },
+      { to: '/curso', label: 'Sobre / Benefícios', icon: 'graduation-cap' },
+      { to: '/modulos', label: 'Módulos', icon: 'layer-group' },
+      { to: '/professor', label: 'Professor', icon: 'user-tie' },
+      { to: '/depoimentos', label: 'Depoimentos', icon: 'star' },
+      { to: '/oferta', label: 'Oferta', icon: 'tags' },
+      { to: '/faq', label: 'FAQ', icon: 'circle-question' },
+      { to: '/botoes', label: 'Botões CTA', icon: 'cart-shopping' }
+    ]
+  },
+  {
+    label: 'Site',
+    items: [
+      { to: '/contato', label: 'Contato', icon: 'address-book' },
+      { to: '/rodape', label: 'Rodapé', icon: 'window-minimize' },
+      { to: '/configuracoes', label: 'Configurações', icon: 'gear' },
+      { to: '/historico', label: 'Histórico', icon: 'clock-rotate-left' }
+    ]
+  }
 ];
 
 export default function AdminLayout() {
@@ -28,20 +46,25 @@ export default function AdminLayout() {
       <aside className="admin-sidebar animate-slide-right">
         <div className="admin-sidebar__head">
           <Logo size="sm" />
-          <span className="admin-sidebar__badge"><Icon name="shield-halved" /> Admin</span>
+          <span className="admin-sidebar__badge"><Icon name="shield-halved" /> CMS</span>
         </div>
         <nav className="admin-nav">
-          {NAV.map((item, i) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              className={({ isActive }) => `admin-nav__link${isActive ? ' is-active' : ''}`}
-              style={{ animationDelay: `${i * 30}ms` }}
-            >
-              <span className="admin-nav__icon"><Icon name={item.icon} /></span>
-              {item.label}
-            </NavLink>
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className="admin-nav__group">
+              <span className="admin-nav__group-label">{group.label}</span>
+              {group.items.map((item, i) => (
+                <NavLink
+                  key={item.to}
+                  to={item.to}
+                  end={item.end}
+                  className={({ isActive }) => `admin-nav__link${isActive ? ' is-active' : ''}`}
+                  style={{ animationDelay: `${i * 24}ms` }}
+                >
+                  <span className="admin-nav__icon"><Icon name={item.icon} /></span>
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="admin-sidebar__foot">
@@ -69,7 +92,7 @@ export default function AdminLayout() {
             )}
             {!saving && isDirty && (
               <span className="status-pill status-pill--dirty">
-                <Icon name="circle-exclamation" /> Não salvo
+                <Icon name="circle-exclamation" /> Alterações não salvas
               </span>
             )}
             {!saving && !isDirty && lastSaved && (
@@ -78,7 +101,7 @@ export default function AdminLayout() {
               </span>
             )}
           </div>
-          <a href="/" target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--sm">
+          <a href="../" target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--sm">
             <Icon name="arrow-up-right-from-square" /> Visualizar site
           </a>
         </header>

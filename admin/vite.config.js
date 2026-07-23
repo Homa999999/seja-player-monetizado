@@ -1,9 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { viteSingleFile } from 'vite-plugin-singlefile';
+
+const gasBuild = process.env.GAS_BUILD === '1';
 
 export default defineConfig({
-  plugins: [react()],
-  // Local (Express): /admin/  |  GitHub Pages (build:pages): ./ (relativo)
+  plugins: [react(), ...(gasBuild ? [viteSingleFile()] : [])],
   base: process.env.ADMIN_BASE || '/admin/',
   server: {
     port: 5173,

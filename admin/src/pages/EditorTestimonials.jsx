@@ -3,7 +3,7 @@ import { useEditor } from '../hooks/useEditor';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import { api } from '../api/client';
 import { useToast } from '../context/ToastContext';
-import { PageHeader, Card, Field, Input, Textarea, ConfirmModal, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, ConfirmModal, PreviewPanel, SaveBar, LoadingState, SortableList } from '../components/UI';
 import Icon from '../components/Icon';
 import { TestimonialsPreview } from '../components/previews/SectionPreviews';
 
@@ -40,17 +40,9 @@ export default function EditorTestimonials() {
     }
   }
 
-  function move(i, dir) {
-    const items = [...section.items];
-    const j = i + dir;
-    if (j < 0 || j >= items.length) return;
-    [items[i], items[j]] = [items[j], items[i]];
-    save({ items: items.map((t, idx) => ({ ...t, order: idx })) });
-  }
-
   return (
     <div className="editor-page">
-      <PageHeader icon="star" title="Depoimentos" description="Gerencie prova social dos alunos." />
+      <PageHeader icon="star" title="Depoimentos" description="Gerencie prova social dos alunos." breadcrumb={[{ label: 'Dashboard', to: '/' }, { label: 'Depoimentos' }]} />
 
       <div className="editor-layout editor-layout--preview-wide">
         <div className="editor-main">
@@ -63,35 +55,36 @@ export default function EditorTestimonials() {
             </div>
           </Card>
 
-          {section.items?.map((t, i) => (
-            <Card key={t.id} title={t.name || `Depoimento ${i + 1}`} icon="comment" delay={80 + i * 40} className="testimonial-editor">
-              <div className="testimonial-editor__toolbar">
-                <button type="button" className="btn btn--ghost btn--sm btn--icon" onClick={() => move(i, -1)} disabled={i === 0} title="Mover para cima">
-                  <Icon name="arrow-up" />
-                </button>
-                <button type="button" className="btn btn--ghost btn--sm btn--icon" onClick={() => move(i, 1)} disabled={i === section.items.length - 1} title="Mover para baixo">
-                  <Icon name="arrow-down" />
-                </button>
-                <button type="button" className="btn btn--danger btn--sm" onClick={() => setDeleteId(t.id)}>
-                  <Icon name="trash" /> Excluir
-                </button>
-              </div>
-              <div className="form-grid">
-                <Field label="Nome"><Input value={t.name} onChange={e => updateItem(i, 'name', e.target.value)} /></Field>
-                <Field label="Tagline"><Input value={t.tagline} onChange={e => updateItem(i, 'tagline', e.target.value)} placeholder="15 min por corte · 100% celular" /></Field>
-                <Field label="Foto">
-                  <div className="upload-field">
-                    {t.photo && <img src={resolveMediaUrl(t.photo)} alt="" className="upload-preview upload-preview--round" />}
-                    <label className="btn btn--outline btn--sm upload-btn">
-                      <Icon name="upload" /> Enviar foto
-                      <input type="file" accept="image/*" onChange={e => uploadPhoto(i, e)} hidden />
-                    </label>
+          <Card title="Depoimentos" icon="comments" delay={80}>
+            <SortableList
+              items={section.items || []}
+              onReorder={(items) => save({ items: items.map((t, idx) => ({ ...t, order: idx })) })}
+              renderItem={(t, i) => (
+                <div className="repeatable-card">
+                  <div className="repeatable-card__toolbar">
+                    <strong>{t.name || `Depoimento ${i + 1}`}</strong>
+                    <button type="button" className="btn btn--danger btn--sm" onClick={() => setDeleteId(t.id)}>
+                      <Icon name="trash" /> Excluir
+                    </button>
                   </div>
-                </Field>
-                <Field label="Texto do depoimento"><Textarea value={t.text} onChange={e => updateItem(i, 'text', e.target.value)} rows={3} /></Field>
-              </div>
-            </Card>
-          ))}
+                  <div className="form-grid">
+                    <Field label="Nome"><Input value={t.name} onChange={e => updateItem(i, 'name', e.target.value)} /></Field>
+                    <Field label="Tagline"><Input value={t.tagline} onChange={e => updateItem(i, 'tagline', e.target.value)} placeholder="15 min por corte · 100% celular" /></Field>
+                    <Field label="Foto">
+                      <div className="upload-field">
+                        {t.photo && <img src={resolveMediaUrl(t.photo)} alt="" className="upload-preview upload-preview--round" />}
+                        <label className="btn btn--outline btn--sm upload-btn">
+                          <Icon name="upload" /> Enviar foto
+                          <input type="file" accept="image/*" onChange={e => uploadPhoto(i, e)} hidden />
+                        </label>
+                      </div>
+                    </Field>
+                    <Field label="Texto do depoimento"><Textarea value={t.text} onChange={e => updateItem(i, 'text', e.target.value)} rows={3} /></Field>
+                  </div>
+                </div>
+              )}
+            />
+          </Card>
 
           <button type="button" className="btn btn--primary" onClick={() => save({ items: [...section.items, newTestimonial()] })}>
             <Icon name="plus" /> Adicionar depoimento

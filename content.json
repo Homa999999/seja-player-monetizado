@@ -219,5 +219,66 @@
     "headerCtaText": "Garantir vaga",
     "stickyCtaText": "Comprar agora",
     "finalCtaText": "Garantir minha vaga agora"
+  },
+  "faq": {
+    "tag": "Dúvidas",
+    "title": "Perguntas frequentes",
+    "titleAccent": "frequentes",
+    "items": [
+      {
+        "id": "1",
+        "question": "Preciso aparecer nos vídeos?",
+        "answer": "Não. O método é 100% focado em canais de cortes de futebol sem aparecer. Você trabalha apenas com lances, montagem e postagem estratégica."
+      },
+      {
+        "id": "2",
+        "question": "Consigo fazer apenas pelo celular?",
+        "answer": "Sim. Todo o processo, da mineração de lances à montagem e postagem dos cortes, pode ser feito direto pelo celular."
+      },
+      {
+        "id": "3",
+        "question": "Como recebo o acesso?",
+        "answer": "Imediatamente no seu e-mail após a confirmação do pagamento. O acesso é instantâneo e vitalício."
+      },
+      {
+        "id": "4",
+        "question": "Preciso saber editar vídeos?",
+        "answer": "Não. O método foi criado para iniciantes absolutos. Você aprende a montar cortes do zero, passo a passo, mesmo que nunca tenha publicado um vídeo."
+      },
+      {
+        "id": "5",
+        "question": "Quanto tempo por dia preciso dedicar?",
+        "answer": "Apenas 1 hora por dia é suficiente para montar, postar e manter consistência no seu canal de cortes."
+      },
+      {
+        "id": "6",
+        "question": "E se eu não gostar do curso?",
+        "answer": "Você tem 7 dias de garantia incondicional. Se não gostar, basta solicitar o reembolso e devolvemos 100% do valor. Sem perguntas."
+      }
+    ]
+  },
+  "footer": {
+    "tagline": "Transformando cortes de futebol em renda digital.",
+    "copyright": "© 2026 Player Monetizado. Todos os direitos reservados.",
+    "links": [
+      { "id": "1", "label": "Política de Privacidade", "url": "politica-privacidade.html" },
+      { "id": "2", "label": "Contato", "url": "contato.html" },
+      { "id": "3", "label": "Termos de Uso", "url": "termos-de-uso.html" }
+    ]
+  },
+  "contact": {
+    "pageTitle": "Contato",
+    "lead": "Suporte para dúvidas sobre o curso, garantia, acesso ou parcerias.",
+    "whatsapp": {
+      "enabled": true,
+      "phone": "5511995791061",
+      "buttonText": "Chamar no WhatsApp",
+      "message": "Olá! Tenho interesse em lucrar com cortes de futebol e quero saber mais sobre o Player Monetizado."
+    },
+    "instagram": {
+      "enabled": true,
+      "handle": "@mitplay10",
+      "url": "https://instagram.com/mitplay10"
+    }
   }
 }

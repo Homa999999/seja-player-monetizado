@@ -1,7 +1,9 @@
+import { isGasAdmin, gasApi, getGasToken } from './gasBridge';
+
 const API = '/api';
 
 function getToken() {
-  return localStorage.getItem('pm_token');
+  return getGasToken();
 }
 
 async function request(path, options = {}) {
@@ -19,7 +21,7 @@ async function request(path, options = {}) {
   return data;
 }
 
-export const api = {
+const restApi = {
   login: (email, password) =>
     request('/auth/login', { method: 'POST', body: JSON.stringify({ email, password }) }),
 
@@ -49,3 +51,20 @@ export const api = {
     return request('/upload', { method: 'POST', body: form, headers: {} });
   }
 };
+
+function resolveApi() {
+  return isGasAdmin() ? gasApi : restApi;
+}
+
+export const api = {
+  login: (...args) => resolveApi().login(...args),
+  getMe: (...args) => resolveApi().getMe(...args),
+  getContent: (...args) => resolveApi().getContent(...args),
+  saveContent: (...args) => resolveApi().saveContent(...args),
+  patchSection: (...args) => resolveApi().patchSection(...args),
+  getStats: (...args) => resolveApi().getStats(...args),
+  getHistory: (...args) => resolveApi().getHistory(...args),
+  upload: (...args) => resolveApi().upload(...args)
+};
+
+export { isGasAdmin };

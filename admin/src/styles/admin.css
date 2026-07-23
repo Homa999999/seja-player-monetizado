@@ -1093,3 +1093,107 @@ button, input, textarea { font: inherit; }
   }
 }
 
+/* ── Breadcrumb ── */
+.breadcrumb {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .35rem;
+  margin-bottom: .65rem;
+  font-size: .78rem;
+  color: var(--text-muted);
+}
+
+.breadcrumb a {
+  color: var(--text-muted);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover { color: var(--primary); }
+
+.breadcrumb__sep {
+  font-size: .65rem;
+  opacity: .55;
+}
+
+/* ── Sidebar groups ── */
+.admin-nav__group { margin-bottom: 1rem; }
+
+.admin-nav__group-label {
+  display: block;
+  padding: 0 .85rem;
+  margin-bottom: .35rem;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  opacity: .85;
+}
+
+/* ── Sortable list ── */
+.sortable-list {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+}
+
+.sortable-list__item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: .65rem;
+  align-items: start;
+  padding: .85rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.sortable-list__item.is-dragging {
+  opacity: .55;
+  border-color: var(--primary);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+}
+
+.sortable-list__handle {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: grab;
+}
+
+.sortable-list__handle:active { cursor: grabbing; }
+
+.sortable-list__body { min-width: 0; }
+
+.repeatable-card__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+  margin-bottom: .85rem;
+}
+
+.repeatable-card__fields { width: 100%; }
+
+.toggle__copy {
+  display: flex;
+  flex-direction: column;
+  gap: .15rem;
+}
+
+.toggle__copy small {
+  color: var(--text-muted);
+  font-size: .78rem;
+  font-weight: 400;
+}
+
+.page-header__text .page-header__icon {
+  margin-top: .15rem;
+}

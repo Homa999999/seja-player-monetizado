@@ -91,6 +91,9 @@ const adminRoutes = [
   'professor',
   'depoimentos',
   'oferta',
+  'faq',
+  'contato',
+  'rodape',
   'botoes',
   'configuracoes',
   'historico'

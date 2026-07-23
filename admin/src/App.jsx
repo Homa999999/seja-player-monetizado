@@ -10,6 +10,9 @@ import EditorTestimonials from './pages/EditorTestimonials';
 import EditorOffer from './pages/EditorOffer';
 import EditorButtons from './pages/EditorButtons';
 import EditorSettings from './pages/EditorSettings';
+import EditorFAQ from './pages/EditorFAQ';
+import EditorFooter from './pages/EditorFooter';
+import EditorContact from './pages/EditorContact';
 import History from './pages/History';
 import AdminLayout from './components/AdminLayout';
 
@@ -30,6 +33,9 @@ export default function App() {
         <Route path="professor" element={<EditorInstructor />} />
         <Route path="depoimentos" element={<EditorTestimonials />} />
         <Route path="oferta" element={<EditorOffer />} />
+        <Route path="faq" element={<EditorFAQ />} />
+        <Route path="contato" element={<EditorContact />} />
+        <Route path="rodape" element={<EditorFooter />} />
         <Route path="botoes" element={<EditorButtons />} />
         <Route path="configuracoes" element={<EditorSettings />} />
         <Route path="historico" element={<History />} />

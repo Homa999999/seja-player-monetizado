@@ -1,5 +1,5 @@
 import { useEditor } from '../hooks/useEditor';
-import { PageHeader, Card, Field, Input, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, PreviewPanel, SaveBar, LoadingState, ColorInput } from '../components/UI';
 import { ButtonsPreview } from '../components/previews/SectionPreviews';
 
 export default function EditorButtons() {
@@ -13,7 +13,7 @@ export default function EditorButtons() {
 
   return (
     <div className="editor-page">
-      <PageHeader icon="cart-shopping" title="Botões de Compra" description="CTAs e link de checkout." />
+      <PageHeader icon="cart-shopping" title="Botões de Compra" description="CTAs e link de checkout." breadcrumb={[{ label: 'Dashboard', to: '/' }, { label: 'Botões CTA' }]} />
 
       <div className="editor-layout editor-layout--preview-wide">
         <div className="editor-main">
@@ -22,10 +22,7 @@ export default function EditorButtons() {
               <Field label="Texto do botão principal"><Input value={btns.checkoutText} onChange={e => update('checkoutText', e.target.value)} /></Field>
               <Field label="Link do checkout (Kiwify)"><Input value={btns.checkoutUrl} onChange={e => update('checkoutUrl', e.target.value)} /></Field>
               <Field label="Cor do botão">
-                <div className="color-field">
-                  <input type="color" value={btns.buttonColor || '#10b981'} onChange={e => update('buttonColor', e.target.value)} />
-                  <Input value={btns.buttonColor || '#10b981'} onChange={e => update('buttonColor', e.target.value)} />
-                </div>
+                <ColorInput value={btns.buttonColor || '#10b981'} onChange={(v) => update('buttonColor', v)} label="Cor do botão" />
               </Field>
               <Field label="CTA do header"><Input value={btns.headerCtaText} onChange={e => update('headerCtaText', e.target.value)} /></Field>
               <Field label="CTA sticky (mobile)"><Input value={btns.stickyCtaText} onChange={e => update('stickyCtaText', e.target.value)} /></Field>

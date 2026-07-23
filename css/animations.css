@@ -246,28 +246,19 @@ body.is-desktop .btn--ghost:active {
 /* ── Cards hover flair (scoped — não afeta .glass-card genérico) ── */
 .pain-card,
 .module-card,
-.bonus-card,
-.testimonial-card {
+.bonus-card {
   isolation: isolate;
 }
 
 .pain-card::before,
 .module-card::before,
-.bonus-card::before,
-.testimonial-card::before {
+.bonus-card::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(
-    110deg,
-    transparent 20%,
-    rgba(16, 185, 129, 0.55) 42%,
-    rgba(251, 191, 36, 0.65) 58%,
-    transparent 80%
-  );
-  background-size: 260% 100%;
+  background: var(--card-border-hover);
   -webkit-mask:
     linear-gradient(#fff 0 0) content-box,
     linear-gradient(#fff 0 0);
@@ -277,7 +268,6 @@ body.is-desktop .btn--ghost:active {
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   opacity: 0;
-  animation: cardBorderShine 4.5s linear infinite;
   pointer-events: none;
   z-index: 3;
   transition: opacity 0.35s var(--ease-out);
@@ -286,50 +276,22 @@ body.is-desktop .btn--ghost:active {
 .pain-card:hover::before,
 .module-card:hover::before,
 .bonus-card:hover::before,
-.testimonial-card:hover::before,
 .pain-card:focus-within::before,
 .module-card:focus-within::before,
-.bonus-card:focus-within::before,
-.testimonial-card:focus-within::before {
-  opacity: 1;
-}
-
-@keyframes cardBorderShine {
-  0% { background-position: 200% center; }
-  100% { background-position: -200% center; }
-}
-
-.module-card::after,
-.bonus-card::after,
-.testimonial-card::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.06) 0%, transparent 50%);
-  opacity: 0;
-  transition: opacity 0.35s var(--ease-out);
-  pointer-events: none;
-  z-index: 0;
-  border-radius: inherit;
-}
-
-.module-card:hover::after,
-.bonus-card:hover::after,
-.testimonial-card:hover::after {
+.bonus-card:focus-within::before {
   opacity: 1;
 }
 
 .module-card > *:not(.module-card__number),
 .bonus-card > *:not(.bonus-card__value),
-.testimonial-card > * {
+.pain-card > * {
   position: relative;
   z-index: 1;
 }
 
 .reveal.visible.pain-card:hover,
 .reveal.visible.module-card:hover,
-.reveal.visible.bonus-card:hover,
-.reveal.visible.testimonial-card:hover {
+.reveal.visible.bonus-card:hover {
   transform: translateY(-4px);
 }
 
@@ -338,8 +300,7 @@ body.is-desktop .btn--ghost:active {
 }
 
 .module-card:hover,
-.bonus-card:hover,
-.testimonial-card:hover {
+.bonus-card:hover {
   box-shadow: 0 16px 32px rgba(0, 0, 0, 0.25);
 }
 
@@ -348,7 +309,7 @@ body.is-desktop .btn--ghost:active {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.04) 0%, transparent 55%);
+  background: var(--card-gradient-hover);
   opacity: 0;
   transition: opacity 0.35s var(--ease-out);
   pointer-events: none;
@@ -585,8 +546,7 @@ body.is-desktop .btn--ghost:active {
 
   .pain-card::before,
   .module-card::before,
-  .bonus-card::before,
-  .testimonial-card::before {
+  .bonus-card::before {
     animation: none;
   }
 

@@ -153,7 +153,7 @@ export async function getHistory(limit = 20) {
 export async function getStats() {
   const content = await getContent();
   const history = await getHistory(1);
-  const sections = ['hero', 'course', 'modules', 'instructor', 'testimonials', 'offer', 'buttons', 'general'];
+  const sections = ['hero', 'course', 'modules', 'instructor', 'testimonials', 'offer', 'buttons', 'faq', 'footer', 'contact', 'general'];
 
   let updatedAt = history[0]?.createdAt || new Date().toISOString();
   if (usePostgres()) {

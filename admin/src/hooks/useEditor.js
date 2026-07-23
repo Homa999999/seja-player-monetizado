@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useContent } from '../context/ContentContext';
 import { useToast } from '../context/ToastContext';
+import { validateSection } from '../utils/validation';
 
 /** Hook para editores: carrega conteúdo e expõe save manual */
 export function useEditor(sectionKey, sectionLabel) {
@@ -28,11 +29,19 @@ export function useEditor(sectionKey, sectionLabel) {
   }
 
   async function handleSave(summary) {
+    const key = sectionKey || 'configuracoes';
+    const target = sectionKey ? ctx.content?.[sectionKey] : ctx.content?.general;
+    const errors = validateSection(key, target, ctx.content);
+    if (errors.length) {
+      showToast(errors[0], 'error');
+      return;
+    }
+
     try {
-      await ctx.save(sectionKey || 'geral', summary || `${sectionLabel} salvo`);
+      await ctx.save(key, summary || `${sectionLabel} salvo`);
       showToast('Alterações salvas com sucesso!');
-    } catch {
-      showToast('Erro ao salvar. Tente novamente.', 'error');
+    } catch (err) {
+      showToast(err.message || 'Erro ao salvar. Tente novamente.', 'error');
     }
   }
 

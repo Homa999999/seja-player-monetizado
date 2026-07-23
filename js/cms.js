@@ -185,7 +185,7 @@
   function applyContent(data) {
     if (!data) return;
 
-    const { general, urgencyBar, hero, course, modules, instructor, testimonials, offer, buttons } = data;
+    const { general, urgencyBar, hero, course, modules, instructor, testimonials, offer, buttons, faq, footer } = data;
 
     if (general?.siteOnline === false) {
       document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;background:#060a12;color:#f8fafc;font-family:Inter,sans-serif"><p>Site em manutenção. Volte em breve.</p></div>';
@@ -355,6 +355,36 @@
 
     if (btnColor) {
       document.documentElement.style.setProperty('--accent-green', btnColor);
+    }
+
+    setTitleWithAccent(
+      document.querySelector('[data-cms="faq.title"]'),
+      faq?.title,
+      faq?.titleAccent || 'frequentes'
+    );
+    setText(document.querySelector('[data-cms="faq.tag"]'), faq?.tag);
+    const faqList = document.querySelector('[data-cms="faq.list"]');
+    if (faqList && faq?.items) {
+      faqList.innerHTML = faq.items.map(item => `
+        <details class="faq-item reveal">
+          <summary class="faq-item__question">
+            ${escapeHtml(item.question)}
+            <span class="faq-item__icon" aria-hidden="true"></span>
+          </summary>
+          <div class="faq-item__answer">
+            <p>${escapeHtml(item.answer)}</p>
+          </div>
+        </details>
+      `).join('');
+    }
+
+    setText(document.querySelector('[data-cms="footer.tagline"]'), footer?.tagline);
+    setText(document.querySelector('[data-cms="footer.copyright"]'), footer?.copyright);
+    const footerLinks = document.querySelector('[data-cms="footer.links"]');
+    if (footerLinks && footer?.links) {
+      footerLinks.innerHTML = footer.links.map(link => `
+        <a href="${escapeHtml(link.url)}">${escapeHtml(link.label)}</a>
+      `).join('');
     }
 
     resetCountUps(['#resultados .count-up']);

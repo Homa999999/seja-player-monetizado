@@ -11,6 +11,7 @@
   --card-marine: #111820;
   --card-gradient: linear-gradient(160deg, #0b1a1c 0%, #0c1220 45%, #111820 100%);
   --card-gradient-hover: linear-gradient(160deg, #0e2226 0%, #0e1624 45%, #151c28 100%);
+  --card-border-hover: linear-gradient(160deg, rgba(52, 211, 153, 0.55) 0%, rgba(12, 18, 32, 0.9) 55%, rgba(17, 24, 32, 1) 100%);
   --card-blue: #0c1220;
   --card-blue-hover: #111827;
   --bg-card: var(--card-gradient);
@@ -367,10 +368,9 @@ strong {
 .section--problem .pain-card:hover,
 .section--instructor .instructor-stats .about-stat:hover,
 .section--modules .module-card:hover,
-.section--results .testimonial-card:hover,
 .section--faq .faq-item[open],
 .section--bonus .bonus-card:hover {
-  background: var(--card-blue-hover);
+  background: var(--card-gradient-hover);
 }
 
 /* ============================================
@@ -1729,10 +1729,6 @@ strong {
   animation: testimonialsMarquee var(--marquee-duration, 24s) linear infinite;
 }
 
-.testimonials-marquee__track.is-marquee-ready:hover {
-  animation-play-state: paused;
-}
-
 .testimonials-marquee__track .testimonial-card {
   flex: 0 0 min(300px, 82vw);
   scroll-snap-align: unset;
@@ -1845,7 +1841,6 @@ strong {
   padding: 1.25rem;
   position: relative;
   overflow: hidden;
-  transition: all var(--transition-base);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -1877,12 +1872,6 @@ strong {
 .testimonial-card__author span {
   font-size: 0.78rem;
   color: var(--text-muted);
-}
-
-.testimonial-card:hover {
-  background: var(--card-gradient-hover);
-  border-color: var(--border-accent);
-  transform: translateY(-4px);
 }
 
 .testimonial-card__stars {
@@ -2495,7 +2484,7 @@ strong {
 }
 
 .faq-item[open] {
-  background: var(--card-blue-hover);
+  background: var(--card-gradient-hover);
   border-color: var(--border-accent);
 }
 
@@ -2796,10 +2785,9 @@ strong {
   .section--problem .pain-card:hover,
   .section--instructor .instructor-stats .about-stat:hover,
   .section--modules .module-card:hover,
-  .section--results .testimonial-card:hover,
   .section--faq .faq-item[open],
   .section--bonus .bonus-card:hover {
-    background: var(--card-blue-hover);
+    background: var(--card-gradient-hover);
   }
 
   .hero__glow {

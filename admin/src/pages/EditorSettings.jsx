@@ -1,7 +1,7 @@
 import { useEditor } from '../hooks/useEditor';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import { api } from '../api/client';
-import { PageHeader, Card, Field, Input, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, SaveBar, LoadingState, Switch } from '../components/UI';
 import Icon from '../components/Icon';
 
 export default function EditorSettings() {
@@ -61,11 +61,12 @@ export default function EditorSettings() {
             </div>
           </Field>
           <Field label="Site online">
-            <label className="toggle">
-              <input type="checkbox" checked={general.siteOnline !== false} onChange={e => updateGeneral('siteOnline', e.target.checked)} />
-              <span className="toggle__track"><span className="toggle__thumb" /></span>
-              <span>{general.siteOnline !== false ? 'Online' : 'Offline (manutenção)'}</span>
-            </label>
+            <Switch
+              checked={general.siteOnline !== false}
+              onChange={(v) => updateGeneral('siteOnline', v)}
+              label={general.siteOnline !== false ? 'Site publicado' : 'Modo manutenção'}
+              description="Quando desativado, visitantes veem aviso de manutenção."
+            />
           </Field>
         </div>
       </Card>
