@@ -22,12 +22,10 @@ export default function EditorHero() {
             <Field label="Destaque linha 1"><Input value={hero.titleAccent1} onChange={e => update('titleAccent1', e.target.value)} /></Field>
             <Field label="Título — linha 2"><Input value={hero.titleLine2} onChange={e => update('titleLine2', e.target.value)} /></Field>
             <Field label="Destaque linha 2"><Input value={hero.titleAccent2} onChange={e => update('titleAccent2', e.target.value)} /></Field>
-            <Field label="Subtítulo" hint="Texto abaixo do título principal.">
-              <Textarea value={hero.subtitle} onChange={e => update('subtitle', e.target.value)} rows={3} />
+            <Field label="Subtítulo" hint="Texto abaixo do título principal." fullWidth>
+              <Textarea value={hero.subtitle} onChange={e => update('subtitle', e.target.value)} rows={4} />
             </Field>
-            <Field label="Texto do botão" icon="hand-pointer"><Input value={hero.buttonText} onChange={e => update('buttonText', e.target.value)} /></Field>
-            <Field label="Link do botão" icon="link"><Input value={hero.buttonLink} onChange={e => update('buttonLink', e.target.value)} placeholder="#preco ou URL" /></Field>
-            <Field label="ID do vídeo (VTurb)" icon="video" hint="Ex: vid-6a0911f9f38f377fba3e82ea">
+            <Field label="ID do vídeo (VTurb)" icon="video" hint="Ex: vid-6a0911f9f38f377fba3e82ea" fullWidth>
               <Input value={hero.videoId} onChange={e => update('videoId', e.target.value)} />
             </Field>
           </div>

@@ -22,7 +22,6 @@ export default function EditorButtons() {
             <Field label="Cor do botão">
               <ColorInput value={btns.buttonColor || '#10b981'} onChange={(v) => update('buttonColor', v)} label="Cor do botão" />
             </Field>
-            <Field label="CTA do header"><Input value={btns.headerCtaText} onChange={e => update('headerCtaText', e.target.value)} /></Field>
             <Field label="CTA sticky (mobile)"><Input value={btns.stickyCtaText} onChange={e => update('stickyCtaText', e.target.value)} /></Field>
             <Field label="CTA final"><Input value={btns.finalCtaText} onChange={e => update('finalCtaText', e.target.value)} /></Field>
           </div>

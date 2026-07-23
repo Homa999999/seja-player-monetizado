@@ -89,16 +89,16 @@ export function Card({ title, icon, children, className = '', delay = 0 }) {
   );
 }
 
-export function Field({ label, hint, icon, children }) {
+export function Field({ label, hint, icon, children, fullWidth = false }) {
   return (
-    <label className="field">
+    <div className={`field${fullWidth ? ' field--full' : ''}`}>
       <span className="field__label">
         {icon && <Icon name={icon} />}
         {label}
       </span>
       {children}
       {hint && <span className="field__hint">{hint}</span>}
-    </label>
+    </div>
   );
 }
 

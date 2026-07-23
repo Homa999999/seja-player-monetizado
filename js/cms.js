@@ -202,6 +202,9 @@
     if (buttons?.checkoutUrl && window.PM_CONFIG) {
       window.PM_CONFIG.checkoutUrl = buttons.checkoutUrl;
     }
+    if (general?.contactPhone && window.PM_CONFIG) {
+      window.PM_CONFIG.contactPhone = general.contactPhone;
+    }
 
     setText(document.querySelector('[data-cms="urgency.badge"]'), urgencyBar?.badge);
     if (urgencyBar?.text) {

@@ -3,7 +3,6 @@ const rules = {
     const errors = [];
     if (!s?.titleLine1?.trim()) errors.push('Título linha 1 é obrigatório.');
     if (!s?.subtitle?.trim()) errors.push('Subtítulo é obrigatório.');
-    if (!s?.buttonText?.trim()) errors.push('Texto do botão é obrigatório.');
     return errors;
   },
   course: (s) => {
@@ -53,6 +52,9 @@ const rules = {
     if (!s?.courseName?.trim()) errors.push('Nome do curso é obrigatório.');
     if (s?.contactEmail && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.contactEmail)) {
       errors.push('E-mail de contato inválido.');
+    }
+    if (s?.contactPhone && !/^\d{10,15}$/.test(s.contactPhone)) {
+      errors.push('Telefone inválido. Use DDI + número, só dígitos.');
     }
     return errors;
   }

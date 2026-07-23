@@ -11,6 +11,7 @@ export default function EditorSettings() {
 
   const general = content.general || {};
   const urgency = content.urgencyBar || {};
+  const siteOnline = general.siteOnline !== false;
 
   function updateGeneral(field, value) {
     patchContent(prev => ({ ...prev, general: { ...prev.general, [field]: value } }));
@@ -38,45 +39,52 @@ export default function EditorSettings() {
     <div className="editor-page">
       <PageHeader icon="gear" title="Configurações Gerais" description="Identidade visual e status do site." />
 
-      <Card title="Identidade" icon="palette" delay={0}>
-        <div className="form-grid">
-          <Field label="Nome do curso"><Input value={general.courseName} onChange={e => updateGeneral('courseName', e.target.value)} /></Field>
-          <Field label="E-mail de contato"><Input value={general.contactEmail} onChange={e => updateGeneral('contactEmail', e.target.value)} /></Field>
-          <Field label="Logo">
-            <div className="upload-field">
-              {general.logo && <img src={resolveMediaUrl(general.logo)} alt="" className="upload-preview" />}
-              <label className="btn btn--outline btn--sm upload-btn">
-                <Icon name="upload" /> Enviar logo
-                <input type="file" accept="image/*" onChange={uploadLogo} hidden />
-              </label>
-            </div>
-          </Field>
-          <Field label="Favicon">
-            <div className="upload-field">
-              {general.favicon && <img src={resolveMediaUrl(general.favicon)} alt="" className="upload-preview" style={{ maxWidth: 48 }} />}
-              <label className="btn btn--outline btn--sm upload-btn">
-                <Icon name="upload" /> Enviar favicon
-                <input type="file" accept="image/*,.svg" onChange={uploadFavicon} hidden />
-              </label>
-            </div>
-          </Field>
-          <Field label="Site online">
+      <div className="editor-main">
+        <Card title="Identidade" icon="palette" delay={0}>
+          <div className="form-grid">
+            <Field label="Nome do curso"><Input value={general.courseName} onChange={e => updateGeneral('courseName', e.target.value)} /></Field>
+            <Field label="E-mail de contato"><Input type="email" value={general.contactEmail} onChange={e => updateGeneral('contactEmail', e.target.value)} /></Field>
+            <Field label="Telefone" hint="Com DDI, apenas números. Ex: 5511999999999">
+              <Input type="tel" inputMode="numeric" value={general.contactPhone || ''} onChange={e => updateGeneral('contactPhone', e.target.value.replace(/\D/g, ''))} placeholder="5511999999999" />
+            </Field>
+            <Field label="Logo" fullWidth>
+              <div className="upload-field">
+                {general.logo && <img src={resolveMediaUrl(general.logo)} alt="" className="upload-preview" />}
+                <label className="btn btn--outline btn--sm upload-btn">
+                  <Icon name="upload" /> Enviar logo
+                  <input type="file" accept="image/*" onChange={uploadLogo} hidden />
+                </label>
+              </div>
+            </Field>
+            <Field label="Favicon" fullWidth>
+              <div className="upload-field">
+                {general.favicon && <img src={resolveMediaUrl(general.favicon)} alt="" className="upload-preview" style={{ maxWidth: 48 }} />}
+                <label className="btn btn--outline btn--sm upload-btn">
+                  <Icon name="upload" /> Enviar favicon
+                  <input type="file" accept="image/*,.svg" onChange={uploadFavicon} hidden />
+                </label>
+              </div>
+            </Field>
+          </div>
+
+          <div className="field field--full field--switch">
+            <span className="field__label">Status do site</span>
             <Switch
-              checked={general.siteOnline !== false}
+              checked={siteOnline}
               onChange={(v) => updateGeneral('siteOnline', v)}
-              label={general.siteOnline !== false ? 'Site publicado' : 'Modo manutenção'}
+              label={siteOnline ? 'Site publicado' : 'Modo manutenção'}
               description="Quando desativado, visitantes veem aviso de manutenção."
             />
-          </Field>
-        </div>
-      </Card>
+          </div>
+        </Card>
 
-      <Card title="Barra de urgência" icon="bolt" delay={80}>
-        <div className="form-grid">
-          <Field label="Badge"><Input value={urgency.badge} onChange={e => updateUrgency('badge', e.target.value)} /></Field>
-          <Field label="Texto"><Input value={urgency.text} onChange={e => updateUrgency('text', e.target.value)} /></Field>
-        </div>
-      </Card>
+        <Card title="Barra de urgência" icon="bolt" delay={80}>
+          <div className="form-grid">
+            <Field label="Badge"><Input value={urgency.badge} onChange={e => updateUrgency('badge', e.target.value)} /></Field>
+            <Field label="Texto" fullWidth><Input value={urgency.text} onChange={e => updateUrgency('text', e.target.value)} /></Field>
+          </div>
+        </Card>
+      </div>
 
       <SaveBar isDirty={isDirty} saving={saving} onSave={handleSave} onDiscard={discard} />
     </div>

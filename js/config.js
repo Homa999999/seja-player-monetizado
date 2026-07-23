@@ -13,6 +13,7 @@ window.PM_CONFIG = {
 
   /** E-mail de contato */
   contactEmail: 'contatomitplay@gmail.com',
+  contactPhone: '5511995791061',
 
   /** Meta Pixel ID (ex.: '123456789012345') — deixe vazio para desativar */
   metaPixelId: '',

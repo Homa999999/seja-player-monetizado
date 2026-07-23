@@ -5,7 +5,8 @@ export default {
     logo: 'assets/brand/mark.svg',
     favicon: 'assets/brand/favicon.svg',
     siteOnline: true,
-    contactEmail: 'contatomitplay@gmail.com'
+    contactEmail: 'contatomitplay@gmail.com',
+    contactPhone: '5511995791061'
   },
   urgencyBar: {
     badge: 'Oferta de lançamento',
