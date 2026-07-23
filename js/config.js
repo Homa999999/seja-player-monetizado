@@ -5,6 +5,9 @@ window.PM_CONFIG = {
   /** URL canônica do site (sem barra final) */
   siteUrl: 'https://playermonetizado.com.br',
 
+  /** Prefixo do site em subpastas (ex.: GitHub Pages). Deixe vazio na raiz do domínio. */
+  siteBasePath: '',
+
   /** Link de checkout Kiwify */
   checkoutUrl: 'https://pay.kiwify.com.br/4Q3618c',
 

@@ -106,3 +106,19 @@ for (const route of adminRoutes) {
 }
 
 console.log(`Site pronto em ${outDir}`);
+
+const repoName = process.env.GITHUB_REPOSITORY?.split('/')[1];
+if (repoName) {
+  const configPath = path.join(outDir, 'js', 'config.min.js');
+  if (fs.existsSync(configPath)) {
+    let config = fs.readFileSync(configPath, 'utf8');
+    if (!config.includes('siteBasePath:')) {
+      config = config.replace(
+        'window.PM_CONFIG={',
+        `window.PM_CONFIG={siteBasePath:"/${repoName}",`
+      );
+      fs.writeFileSync(configPath, config);
+      console.log(`  config.min.js — siteBasePath=/${repoName}`);
+    }
+  }
+}
