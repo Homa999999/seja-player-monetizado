@@ -182,6 +182,57 @@
     window.PM_initCountUps?.();
   }
 
+  function renderTestimonialCard(t, star) {
+    return `
+        <article class="testimonial-card glass-card reveal visible">
+          <header class="testimonial-card__header">
+            <img src="${escapeHtml(resolveMediaUrl(t.photo))}" alt="${escapeHtml(t.name)}" class="testimonial-card__avatar" width="56" height="56" loading="lazy">
+            <div class="testimonial-card__author">
+              <strong>${escapeHtml(t.name)}</strong>
+              <span>${wrapCountUpNumbers(t.tagline)}</span>
+            </div>
+          </header>
+          <div class="testimonial-card__stars" aria-label="5 estrelas">${star.repeat(5)}</div>
+          <p>"${wrapCountUpNumbers(t.text)}"</p>
+        </article>
+      `;
+  }
+
+  function applyTestimonials(track, items) {
+    if (!track || !items?.length) return;
+
+    const star = '<svg class="icon-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+    const existing = [...track.querySelectorAll('.testimonial-card')].filter(
+      (el) => !el.hasAttribute('data-marquee-clone')
+    );
+
+    if (existing.length === items.length) {
+      items.forEach((t, i) => {
+        const card = existing[i];
+        const img = card.querySelector('.testimonial-card__avatar');
+        if (img && t.photo) {
+          const nextSrc = resolveMediaUrl(t.photo);
+          if (nextSrc) img.src = nextSrc;
+        }
+        if (img && t.name) img.alt = t.name;
+
+        const strong = card.querySelector('.testimonial-card__author strong');
+        if (strong && t.name) strong.textContent = t.name;
+
+        const tagline = card.querySelector('.testimonial-card__author span');
+        if (tagline && t.tagline != null) tagline.innerHTML = wrapCountUpNumbers(t.tagline);
+
+        const quote = card.querySelector('p');
+        if (quote && t.text != null) quote.innerHTML = `"${wrapCountUpNumbers(t.text)}"`;
+
+        card.classList.add('visible');
+      });
+      return;
+    }
+
+    track.innerHTML = items.map((t) => renderTestimonialCard(t, star)).join('');
+  }
+
   function applyContent(data) {
     if (!data) return;
 
@@ -304,22 +355,7 @@
     setText(document.querySelector('[data-cms="testimonials.subtitle"]'), testimonials?.subtitle);
     setText(document.querySelector('[data-cms="testimonials.disclaimer"]'), testimonials?.disclaimer);
     const track = document.querySelector('[data-cms="testimonials.grid"]');
-    if (track && testimonials?.items) {
-      const star = '<svg class="icon-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-      track.innerHTML = testimonials.items.map(t => `
-        <article class="testimonial-card glass-card reveal">
-          <header class="testimonial-card__header">
-            <img src="${escapeHtml(resolveMediaUrl(t.photo))}" alt="${escapeHtml(t.name)}" class="testimonial-card__avatar" width="56" height="56" loading="lazy">
-            <div class="testimonial-card__author">
-              <strong>${escapeHtml(t.name)}</strong>
-              <span>${wrapCountUpNumbers(t.tagline)}</span>
-            </div>
-          </header>
-          <div class="testimonial-card__stars" aria-label="5 estrelas">${star.repeat(5)}</div>
-          <p>"${wrapCountUpNumbers(t.text)}"</p>
-        </article>
-      `).join('');
-    }
+    applyTestimonials(track, testimonials?.items);
 
     setText(document.querySelector('[data-cms="offer.productName"]'), offer?.productName);
     setText(document.querySelector('[data-cms="offer.productSubtitle"]'), offer?.productSubtitle);

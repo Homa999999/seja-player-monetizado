@@ -124,7 +124,12 @@
   }
 
   revealElements.forEach(el => revealObserver.observe(el));
-  window.addEventListener('cms:applied', refreshRevealsInView);
+  window.addEventListener('cms:applied', () => {
+    refreshRevealsInView();
+    document.querySelectorAll('#testimonialsTrack .testimonial-card').forEach((card) => {
+      card.classList.add('visible');
+    });
+  });
   if (window.__cmsReady) refreshRevealsInView();
 
   /* ── Count-up animation (all landing stats) ── */
@@ -715,35 +720,35 @@
     if (!track || track.dataset.pauseBound === '1') return;
     track.dataset.pauseBound = '1';
 
-    let pauseDepth = 0;
-
-    function pauseMarquee() {
-      pauseDepth += 1;
-      track.classList.add('is-marquee-paused');
-    }
-
-    function resumeMarquee() {
-      pauseDepth = Math.max(0, pauseDepth - 1);
-      if (pauseDepth === 0) track.classList.remove('is-marquee-paused');
-    }
-
-    track.addEventListener('pointerover', (e) => {
-      if (e.target.closest('.testimonial-card')) pauseMarquee();
-    });
-
-    track.addEventListener('pointerout', (e) => {
+    track.addEventListener('mouseover', (e) => {
       const card = e.target.closest('.testimonial-card');
-      if (!card) return;
-      const related = e.relatedTarget;
-      if (related && card.contains(related)) return;
-      resumeMarquee();
+      if (!card || !track.contains(card)) return;
+      const from = e.relatedTarget;
+      if (from && card.contains(from)) return;
+      track.classList.add('is-marquee-paused');
     });
+
+    track.addEventListener('mouseout', (e) => {
+      const card = e.target.closest('.testimonial-card');
+      if (!card || !track.contains(card)) return;
+      const related = e.relatedTarget;
+      if (related && (card.contains(related) || related.closest?.('.testimonial-card'))) return;
+      track.classList.remove('is-marquee-paused');
+    });
+
+    track.addEventListener('touchstart', (e) => {
+      if (e.target.closest('.testimonial-card')) track.classList.add('is-marquee-paused');
+    }, { passive: true });
+
+    track.addEventListener('touchend', () => track.classList.remove('is-marquee-paused'), { passive: true });
+    track.addEventListener('touchcancel', () => track.classList.remove('is-marquee-paused'), { passive: true });
   }
 
   function initTestimonialsMarquee() {
     const track = document.getElementById('testimonialsTrack');
     if (!track) return;
 
+    track.classList.remove('is-marquee-paused');
     track.querySelectorAll('[data-marquee-clone]').forEach((node) => node.remove());
     track.classList.remove('is-marquee-ready');
     track.style.removeProperty('--marquee-duration');
