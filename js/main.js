@@ -17,6 +17,8 @@
   const hero = document.getElementById('hero');
   const vslSection = document.getElementById('vsl');
 
+  document.querySelectorAll('.hero .reveal').forEach((el) => el.classList.add('visible'));
+
   document.querySelectorAll('a[href*="kiwify.com"], .checkout-link').forEach(link => {
     link.classList.add('checkout-link');
   });
@@ -422,7 +424,6 @@
   /* ── VSL gate: exibe .depois3minutos após 3 min de vídeo ── */
   const VSL_GATE_SECONDS = 180;
   const vslGate = document.querySelector('.depois3minutos');
-  const vslPlayer = document.querySelector('vturb-smartplayer');
   const vslGatePersistKey = `alreadyElsDisplayed${VSL_GATE_SECONDS}`;
 
   function unlockVslGate() {
@@ -458,22 +459,12 @@
     poll();
   }
 
-  function initVslGate() {
-    if (!vslGate) return;
+  function bindVslGate(player) {
+    if (!vslGate || vslGate.dataset.vslUnlocked === '1') return;
 
-    if (localStorage.getItem(vslGatePersistKey) === 'true') {
-      unlockVslGate();
-      return;
-    }
-
-    if (!vslPlayer) {
-      watchVslGateFallback();
-      return;
-    }
-
-    vslPlayer.addEventListener('player:ready', () => {
-      if (typeof vslPlayer.displayHiddenElements === 'function') {
-        vslPlayer.displayHiddenElements(VSL_GATE_SECONDS, ['.depois3minutos'], { persist: true });
+    player.addEventListener('player:ready', () => {
+      if (typeof player.displayHiddenElements === 'function') {
+        player.displayHiddenElements(VSL_GATE_SECONDS, ['.depois3minutos'], { persist: true });
 
         const gateObserver = new MutationObserver(() => {
           if (getComputedStyle(vslGate).display !== 'none') {
@@ -486,7 +477,24 @@
       }
 
       watchVslGateFallback();
-    });
+    }, { once: true });
+  }
+
+  function initVslGate() {
+    if (!vslGate) return;
+
+    if (localStorage.getItem(vslGatePersistKey) === 'true') {
+      unlockVslGate();
+      return;
+    }
+
+    const player = document.querySelector('vturb-smartplayer');
+    if (player) {
+      bindVslGate(player);
+      return;
+    }
+
+    watchVslGateFallback();
   }
 
   initVslGate();
@@ -596,12 +604,30 @@
   /* ── Subtle parallax on hero glows ── */
   /* handled in unified scroll loop above */
 
-  /* ── VTurb player (carrega e inicia automaticamente) ── */
+  /* ── VTurb player (lazy: não compete com LCP no mobile) ── */
   const VSL_PLAYER_SRC = 'https://scripts.converteai.net/c4d8dc09-d14e-4c12-94a3-b57ca9ac174a/players/6a0911f9f38f377fba3e82ea/v4/player.js';
+  const DEFAULT_VSL_VIDEO_ID = 'vid-6a0911f9f38f377fba3e82ea';
   const heroVsl = document.getElementById('heroVsl');
   const vslFacade = document.getElementById('vslFacade');
   let vslLoaded = false;
   let vslPlaybackBound = false;
+
+  function ensureVslPlayer() {
+    let player = document.querySelector('vturb-smartplayer');
+    if (player) return player;
+
+    player = document.createElement('vturb-smartplayer');
+    player.id = heroVsl?.dataset.vslVideoId || DEFAULT_VSL_VIDEO_ID;
+    player.style.width = '100%';
+
+    const placeholder = document.createElement('div');
+    placeholder.className = 'vturb-player-placeholder';
+    placeholder.style.cssText = 'position:relative;width:100%;padding:56.25% 0 0;z-index:0;background-color:#0a1628;';
+    player.appendChild(placeholder);
+    heroVsl?.appendChild(player);
+    bindVslGate(player);
+    return player;
+  }
 
   function loadVslPlayer() {
     if (vslLoaded) return Promise.resolve();
@@ -673,6 +699,7 @@
   async function activateVsl() {
     if (!heroVsl) return;
     heroVsl.classList.add('is-active');
+    ensureVslPlayer();
     await loadVslPlayer();
     startVslPlayback();
   }

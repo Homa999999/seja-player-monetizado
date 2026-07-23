@@ -237,6 +237,8 @@
     }
 
     if (hero?.videoId) {
+      const heroVsl = document.getElementById('heroVsl');
+      if (heroVsl) heroVsl.dataset.vslVideoId = hero.videoId;
       const player = document.querySelector('vturb-smartplayer');
       if (player) player.id = hero.videoId;
     }
