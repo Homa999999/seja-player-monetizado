@@ -787,10 +787,10 @@
     document.body.appendChild(script);
   }
 
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(loadCmsScript, { timeout: 3500 });
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadCmsScript);
   } else {
-    window.addEventListener('load', () => window.setTimeout(loadCmsScript, 800));
+    loadCmsScript();
   }
 
 })();

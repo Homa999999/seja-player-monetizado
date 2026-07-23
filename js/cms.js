@@ -202,34 +202,6 @@
     if (!track || !items?.length) return;
 
     const star = '<svg class="icon-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
-    const existing = [...track.querySelectorAll('.testimonial-card')].filter(
-      (el) => !el.hasAttribute('data-marquee-clone')
-    );
-
-    if (existing.length === items.length) {
-      items.forEach((t, i) => {
-        const card = existing[i];
-        const img = card.querySelector('.testimonial-card__avatar');
-        if (img && t.photo) {
-          const nextSrc = resolveMediaUrl(t.photo);
-          if (nextSrc) img.src = nextSrc;
-        }
-        if (img && t.name) img.alt = t.name;
-
-        const strong = card.querySelector('.testimonial-card__author strong');
-        if (strong && t.name) strong.textContent = t.name;
-
-        const tagline = card.querySelector('.testimonial-card__author span');
-        if (tagline && t.tagline != null) tagline.innerHTML = wrapCountUpNumbers(t.tagline);
-
-        const quote = card.querySelector('p');
-        if (quote && t.text != null) quote.innerHTML = `"${wrapCountUpNumbers(t.text)}"`;
-
-        card.classList.add('visible');
-      });
-      return;
-    }
-
     track.innerHTML = items.map((t) => renderTestimonialCard(t, star)).join('');
   }
 

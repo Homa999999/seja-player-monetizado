@@ -362,14 +362,21 @@ strong {
 .section--faq .faq-item,
 .section--bonus .bonus-card {
   background: var(--card-blue);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.section--results .testimonial-card:hover,
+.section--faq .faq-item[open],
+.section--bonus .bonus-card:hover {
+  border-color: var(--border-accent);
+  background: var(--card-gradient-hover);
 }
 
 .hero .stat-card:hover,
 .section--problem .pain-card:hover,
 .section--instructor .instructor-stats .about-stat:hover,
-.section--modules .module-card:hover,
-.section--faq .faq-item[open],
-.section--bonus .bonus-card:hover {
+.section--modules .module-card:hover {
   background: var(--card-gradient-hover);
 }
 
@@ -1860,8 +1867,8 @@ strong {
 }
 
 .testimonial-card__avatar {
-  width: 48px;
-  height: 48px;
+  width: 56px;
+  height: 56px;
   border-radius: 50%;
   object-fit: cover;
   flex-shrink: 0;
@@ -2786,14 +2793,21 @@ strong {
   .section--faq .faq-item,
   .section--bonus .bonus-card {
     background: var(--card-blue);
+    border: 1px solid rgba(16, 185, 129, 0.18);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  }
+
+  .section--results .testimonial-card:hover,
+  .section--faq .faq-item[open],
+  .section--bonus .bonus-card:hover {
+    border-color: var(--border-accent);
+    background: var(--card-gradient-hover);
   }
 
   .hero .stat-card:hover,
   .section--problem .pain-card:hover,
   .section--instructor .instructor-stats .about-stat:hover,
-  .section--modules .module-card:hover,
-  .section--faq .faq-item[open],
-  .section--bonus .bonus-card:hover {
+  .section--modules .module-card:hover {
     background: var(--card-gradient-hover);
   }
 
