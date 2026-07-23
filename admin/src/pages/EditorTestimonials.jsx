@@ -3,9 +3,8 @@ import { useEditor } from '../hooks/useEditor';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import { api } from '../api/client';
 import { useToast } from '../context/ToastContext';
-import { PageHeader, Card, Field, Input, Textarea, ConfirmModal, PreviewPanel, SaveBar, LoadingState, SortableList } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, ConfirmModal, SaveBar, LoadingState, SortableList } from '../components/UI';
 import Icon from '../components/Icon';
-import { TestimonialsPreview } from '../components/previews/SectionPreviews';
 
 function newTestimonial() {
   return { id: crypto.randomUUID(), name: '', photo: '', tagline: '', text: '', order: Date.now() };
@@ -44,8 +43,7 @@ export default function EditorTestimonials() {
     <div className="editor-page">
       <PageHeader icon="star" title="Depoimentos" description="Gerencie prova social dos alunos." breadcrumb={[{ label: 'Dashboard', to: '/' }, { label: 'Depoimentos' }]} />
 
-      <div className="editor-layout editor-layout--preview-wide">
-        <div className="editor-main">
+      <div className="editor-main">
           <Card title="Cabeçalho" icon="heading" delay={0}>
             <div className="form-grid">
               <Field label="Tag"><Input value={section.tag} onChange={e => save({ tag: e.target.value })} /></Field>
@@ -89,11 +87,6 @@ export default function EditorTestimonials() {
           <button type="button" className="btn btn--primary" onClick={() => save({ items: [...section.items, newTestimonial()] })}>
             <Icon name="plus" /> Adicionar depoimento
           </button>
-        </div>
-
-        <PreviewPanel wide>
-          <TestimonialsPreview testimonials={section} />
-        </PreviewPanel>
       </div>
 
       <ConfirmModal

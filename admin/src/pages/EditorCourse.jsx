@@ -1,7 +1,6 @@
 import { useEditor } from '../hooks/useEditor';
-import { PageHeader, Card, Field, Input, Textarea, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, SaveBar, LoadingState } from '../components/UI';
 import Icon from '../components/Icon';
-import { CoursePreview } from '../components/previews/SectionPreviews';
 
 export default function EditorCourse() {
   const { section: course, loading, isDirty, saving, updateSection, handleSave, discard } = useEditor('course', 'Sobre o Curso');
@@ -22,8 +21,7 @@ export default function EditorCourse() {
     <div className="editor-page">
       <PageHeader icon="graduation-cap" title="Sobre o Curso" description="Apresentação do método e benefícios." />
 
-      <div className="editor-layout editor-layout--preview-wide">
-        <div className="editor-main">
+      <div className="editor-main">
           <Card title="Informações" icon="circle-info" delay={0}>
             <div className="form-grid">
               <Field label="Tag da seção"><Input value={course.tag} onChange={e => update('tag', e.target.value)} /></Field>
@@ -49,11 +47,6 @@ export default function EditorCourse() {
               <Icon name="plus" /> Adicionar item
             </button>
           </Card>
-        </div>
-
-        <PreviewPanel wide>
-          <CoursePreview course={course} />
-        </PreviewPanel>
       </div>
 
       <SaveBar isDirty={isDirty} saving={saving} onSave={handleSave} onDiscard={discard} />

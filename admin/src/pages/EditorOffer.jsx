@@ -1,13 +1,9 @@
 import { useEditor } from '../hooks/useEditor';
-import { useContent } from '../context/ContentContext';
-import { PageHeader, Card, Field, Input, Textarea, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, SaveBar, LoadingState } from '../components/UI';
 import Icon from '../components/Icon';
-import { OfferPreview } from '../components/previews/SectionPreviews';
 
 export default function EditorOffer() {
   const { section: offer, loading, isDirty, saving, updateSection, handleSave, discard } = useEditor('offer', 'Oferta');
-  const { content } = useContent();
-  const checkoutText = content?.buttons?.checkoutText;
 
   if (loading || !offer) return <LoadingState />;
 
@@ -23,8 +19,7 @@ export default function EditorOffer() {
     <div className="editor-page">
       <PageHeader icon="tags" title="Oferta" description="Preços, bônus, garantia e urgência." />
 
-      <div className="editor-layout editor-layout--preview-wide">
-        <div className="editor-main">
+      <div className="editor-main">
           <Card title="Preços" icon="dollar-sign" delay={0}>
             <div className="form-grid">
               <Field label="Preço antigo (riscado)"><Input value={offer.oldPrice} onChange={e => update('oldPrice', e.target.value)} placeholder="297" /></Field>
@@ -58,11 +53,6 @@ export default function EditorOffer() {
               <Icon name="plus" /> Bônus
             </button>
           </Card>
-        </div>
-
-        <PreviewPanel wide>
-          <OfferPreview offer={offer} checkoutText={checkoutText} />
-        </PreviewPanel>
       </div>
 
       <SaveBar isDirty={isDirty} saving={saving} onSave={handleSave} onDiscard={discard} />

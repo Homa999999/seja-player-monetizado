@@ -60,11 +60,6 @@ export default function Dashboard() {
         icon="house"
         title={`${greeting()}, ${user?.name || 'Admin'}`}
         description="Gerencie sua landing page de vendas sem mexer no código."
-        action={
-          <a href="/" target="_blank" rel="noopener noreferrer" className="btn btn--primary">
-            <Icon name="arrow-up-right-from-square" /> Visualizar site
-          </a>
-        }
       />
 
       <div className="stats-grid">

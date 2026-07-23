@@ -207,17 +207,6 @@ export function ConfirmModal({ open, title, message, onConfirm, onCancel }) {
   );
 }
 
-export function PreviewPanel({ children, wide = false }) {
-  return (
-    <aside className={`preview-panel animate-in${wide ? ' preview-panel--wide' : ''}`} style={{ animationDelay: '120ms' }}>
-      <div className="preview-panel__label">
-        <Icon name="eye" /> Preview ao vivo
-      </div>
-      <div className="preview-panel__body">{children}</div>
-    </aside>
-  );
-}
-
 export function LoadingState({ text = 'Carregando...' }) {
   return (
     <div className="loading-state animate-in">

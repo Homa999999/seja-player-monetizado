@@ -1,4 +1,5 @@
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useContent } from '../context/ContentContext';
 import Logo from './Logo';
@@ -40,13 +41,58 @@ export default function AdminLayout() {
   const { user, logout } = useAuth();
   const { saving, isDirty, lastSaved } = useContent();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    setSidebarOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    document.body.classList.toggle('admin-sidebar-open', sidebarOpen);
+    return () => document.body.classList.remove('admin-sidebar-open');
+  }, [sidebarOpen]);
+
+  useEffect(() => {
+    function onResize() {
+      if (window.innerWidth > 900) setSidebarOpen(false);
+    }
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
 
   return (
-    <div className="admin-shell">
-      <aside className="admin-sidebar animate-slide-right">
+    <div className={`admin-shell${sidebarOpen ? ' admin-shell--sidebar-open' : ''}`}>
+      <button
+        type="button"
+        className="sidebar-edge-toggle"
+        onClick={() => setSidebarOpen(true)}
+        aria-label="Abrir menu"
+        aria-expanded={sidebarOpen}
+      >
+        <Icon name="chevron-right" />
+      </button>
+
+      <button
+        type="button"
+        className="sidebar-backdrop"
+        aria-label="Fechar menu"
+        onClick={() => setSidebarOpen(false)}
+        tabIndex={sidebarOpen ? 0 : -1}
+      />
+
+      <aside className={`admin-sidebar${sidebarOpen ? ' is-open' : ''}`}>
         <div className="admin-sidebar__head">
           <Logo size="sm" />
           <span className="admin-sidebar__badge"><Icon name="shield-halved" /> CMS</span>
+          <button
+            type="button"
+            className="sidebar-close-btn"
+            onClick={() => setSidebarOpen(false)}
+            aria-label="Fechar menu"
+          >
+            <Icon name="chevron-left" />
+          </button>
         </div>
         <nav className="admin-nav">
           {NAV_GROUPS.map((group) => (
@@ -59,6 +105,7 @@ export default function AdminLayout() {
                   end={item.end}
                   className={({ isActive }) => `admin-nav__link${isActive ? ' is-active' : ''}`}
                   style={{ animationDelay: `${i * 24}ms` }}
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <span className="admin-nav__icon"><Icon name={item.icon} /></span>
                   {item.label}
@@ -84,7 +131,17 @@ export default function AdminLayout() {
       <div className="admin-main">
         <div className="admin-main__mesh" aria-hidden="true" />
         <header className="admin-topbar">
-          <div className="admin-topbar__status">
+          <div className="admin-topbar__start">
+            <button
+              type="button"
+              className="sidebar-toggle btn btn--ghost btn--icon"
+              onClick={() => setSidebarOpen((open) => !open)}
+              aria-label={sidebarOpen ? 'Fechar menu' : 'Abrir menu'}
+              aria-expanded={sidebarOpen}
+            >
+              <Icon name={sidebarOpen ? 'chevron-left' : 'chevron-right'} />
+            </button>
+            <div className="admin-topbar__status">
             {saving && (
               <span className="status-pill status-pill--saving">
                 <Icon name="spinner" className="fa-spin" /> Salvando...
@@ -100,10 +157,8 @@ export default function AdminLayout() {
                 <Icon name="circle-check" /> Salvo
               </span>
             )}
+            </div>
           </div>
-          <a href="../" target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--sm">
-            <Icon name="arrow-up-right-from-square" /> Visualizar site
-          </a>
         </header>
         <main className="admin-content">
           <PageTransition>

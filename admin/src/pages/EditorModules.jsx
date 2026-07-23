@@ -1,7 +1,6 @@
 import { useEditor } from '../hooks/useEditor';
-import { PageHeader, Card, Field, Input, Textarea, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, SaveBar, LoadingState } from '../components/UI';
 import Icon from '../components/Icon';
-import { ModulesPreview } from '../components/previews/SectionPreviews';
 
 function newModule(num) {
   return { id: crypto.randomUUID(), number: String(num).padStart(2, '0'), name: '', description: '', topics: [''] };
@@ -33,8 +32,7 @@ export default function EditorModules() {
     <div className="editor-page">
       <PageHeader icon="layer-group" title="Módulos do Curso" description="Organize o conteúdo do treinamento." />
 
-      <div className="editor-layout editor-layout--preview-wide">
-        <div className="editor-main">
+      <div className="editor-main">
           <Card title="Cabeçalho da seção" icon="heading" delay={0}>
             <div className="form-grid">
               <Field label="Tag"><Input value={mod.tag} onChange={e => updateSection({ tag: e.target.value })} /></Field>
@@ -72,11 +70,6 @@ export default function EditorModules() {
           <button type="button" className="btn btn--primary" onClick={() => saveItems([...mod.items, newModule(mod.items.length + 1)])}>
             <Icon name="plus" /> Adicionar módulo
           </button>
-        </div>
-
-        <PreviewPanel wide>
-          <ModulesPreview modules={mod} />
-        </PreviewPanel>
       </div>
 
       <SaveBar isDirty={isDirty} saving={saving} onSave={handleSave} onDiscard={discard} />

@@ -19,8 +19,8 @@
   };
 
   var DEFAULT_ADMIN = {
-    email: 'mitplay10@gmail.com',
-    password: 'mitgold'
+    email: 'contasafe31@gmail.com',
+    password: '72938649174'
   };
 
   function doGet(e) {

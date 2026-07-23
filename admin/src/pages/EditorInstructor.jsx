@@ -2,9 +2,8 @@ import { useEditor } from '../hooks/useEditor';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import { api } from '../api/client';
 import { useToast } from '../context/ToastContext';
-import { PageHeader, Card, Field, Input, Textarea, PreviewPanel, SaveBar, LoadingState } from '../components/UI';
+import { PageHeader, Card, Field, Input, Textarea, SaveBar, LoadingState } from '../components/UI';
 import Icon from '../components/Icon';
-import { InstructorPreview } from '../components/previews/SectionPreviews';
 
 export default function EditorInstructor() {
   const { section: inst, loading, isDirty, saving, updateSection, handleSave, discard } = useEditor('instructor', 'Professor');
@@ -34,8 +33,7 @@ export default function EditorInstructor() {
     <div className="editor-page">
       <PageHeader icon="user-tie" title="Professor" description="Informações do instrutor do curso." />
 
-      <div className="editor-layout editor-layout--preview-wide">
-        <div className="editor-main">
+      <div className="editor-main">
           <Card title="Perfil" icon="id-card" delay={0}>
             <div className="form-grid">
               <Field label="Foto" icon="camera">
@@ -65,11 +63,6 @@ export default function EditorInstructor() {
               </div>
             ))}
           </Card>
-        </div>
-
-        <PreviewPanel wide>
-          <InstructorPreview instructor={inst} />
-        </PreviewPanel>
       </div>
 
       <SaveBar isDirty={isDirty} saving={saving} onSave={handleSave} onDiscard={discard} />
