@@ -27,5 +27,5 @@ window.PM_CONFIG = {
    * 'https://script.google.com/macros/s/SEU_ID/exec?action=content'
    * Depois: npm run build:assets → commit → deploy
    */
-  gasContentUrl: 'https://script.google.com/macros/s/AKfycby37cTr3PpuVTDf9KC9uyfIP25LiRrxO-0QkHuOFd6aQjRGXqDJRwurCuHElLh62cDxKA/exec?action=content'
+  gasContentUrl: 'https://script.google.com/macros/s/AKfycbxo-20NgApWqXPQXUEAsrtdPC0l4Rcvz8BDWTe_VXh8L7aB4N1P1QNJ8DfX2HNL3TikUg/exec?action=content'
 };
