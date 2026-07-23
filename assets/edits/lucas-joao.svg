@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 480" fill="none">
+  <defs>
+    <linearGradient id="bg-instructor" x1="0" y1="0" x2="400" y2="480" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0c1220"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="avatar-g" x1="200" y1="80" x2="200" y2="360" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#10b981"/>
+      <stop offset="1" stop-color="#059669"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="480" rx="20" fill="url(#bg-instructor)"/>
+  <circle cx="200" cy="180" r="90" fill="url(#avatar-g)" opacity=".35"/>
+  <circle cx="200" cy="170" r="72" fill="#1e293b" stroke="rgba(16,185,129,.4)" stroke-width="3"/>
+  <text x="200" y="185" text-anchor="middle" fill="#34d399" font-family="system-ui,sans-serif" font-size="48" font-weight="700">LJ</text>
+  <text x="200" y="290" text-anchor="middle" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="22" font-weight="700">Lucas João Resende</text>
+  <text x="200" y="318" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="14">@mitplay10</text>
+  <rect x="80" y="350" width="240" height="36" rx="8" fill="rgba(16,185,129,.12)" stroke="rgba(16,185,129,.3)" stroke-width="1"/>
+  <text x="200" y="373" text-anchor="middle" fill="#34d399" font-family="system-ui,sans-serif" font-size="12" font-weight="600">Criador do Player Monetizado</text>
+</svg>

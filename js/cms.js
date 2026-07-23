@@ -1,0 +1,341 @@
+/**
+ * CMS — carrega conteúdo da API e aplica na landing page
+ */
+(function () {
+  'use strict';
+
+  const API = '/api/content';
+  const STATIC_CONTENT = '/content.json';
+  const GAS_CONTENT = (window.PM_CONFIG && window.PM_CONFIG.gasContentUrl) || '';
+
+  function loadJsonp(url, timeoutMs) {
+    return new Promise((resolve, reject) => {
+      const callback = `pmCms_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+      const script = document.createElement('script');
+      let settled = false;
+
+      const finish = (fn, value) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        cleanup();
+        fn(value);
+      };
+
+      const cleanup = () => {
+        delete window[callback];
+        script.remove();
+      };
+
+      const timer = setTimeout(() => {
+        finish(reject, new Error('Timeout ao carregar CMS (JSONP)'));
+      }, timeoutMs || 15000);
+
+      window[callback] = (data) => {
+        if (data && data.error) {
+          finish(reject, new Error(data.error));
+          return;
+        }
+        finish(resolve, data);
+      };
+
+      script.src = `${url}${url.includes('?') ? '&' : '?'}callback=${encodeURIComponent(callback)}&t=${Date.now()}`;
+      script.async = true;
+      script.onerror = () => finish(reject, new Error('Falha ao carregar CMS (JSONP)'));
+      document.head.appendChild(script);
+    });
+  }
+
+  async function loadContent() {
+    if (GAS_CONTENT) {
+      try {
+        return await loadJsonp(GAS_CONTENT);
+      } catch (err) {
+        console.warn('[CMS] GAS indisponível, usando content.json:', err.message);
+      }
+    }
+
+    try {
+      const response = await fetch(`${API}?t=${Date.now()}`, { cache: 'no-store' });
+      if (response.ok) return response.json();
+    } catch {
+      /* API indisponível (ex.: GitHub Pages) */
+    }
+
+    try {
+      const response = await fetch(`${STATIC_CONTENT}?t=${Date.now()}`, { cache: 'no-store' });
+      if (response.ok) return response.json();
+    } catch {
+      /* fallback: HTML estático */
+    }
+
+    return null;
+  }
+
+  function resolveMediaUrl(url) {
+    if (!url) return '';
+    if (/^https?:\/\//i.test(url) || url.startsWith('data:') || url.startsWith('/')) return url;
+    return `/${url.replace(/^\.\//, '')}`;
+  }
+
+  function setText(el, text) {
+    if (el && text != null) el.textContent = text;
+  }
+
+  function setHtml(el, html) {
+    if (el && html != null) el.innerHTML = html;
+  }
+
+  function setAll(selector, fn) {
+    document.querySelectorAll(selector).forEach(fn);
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function setTitleWithAccent(el, title, accent) {
+    if (!el || title == null) return;
+    if (accent && title.includes(accent)) {
+      const i = title.indexOf(accent);
+      el.innerHTML =
+        `${escapeHtml(title.slice(0, i))}<span class="gradient-text">${escapeHtml(accent)}</span>${escapeHtml(title.slice(i + accent.length))}`;
+    } else {
+      el.textContent = title;
+    }
+  }
+
+  function applyHeroTitleLine(lineEl, line, accent, accentClass) {
+    if (!lineEl || !line) return;
+    const idx = accent ? line.indexOf(accent) : -1;
+    if (idx === -1) {
+      lineEl.textContent = line;
+      return;
+    }
+    lineEl.innerHTML =
+      `${escapeHtml(line.slice(0, idx))}<span class="hero__title-accent ${accentClass}">${escapeHtml(accent)}</span>${escapeHtml(line.slice(idx + accent.length))}`;
+  }
+
+  const MODULE_ICONS = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>'
+  ];
+
+  const BONUS_ICONS = [
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M19 13l.75 2.25L22 16l-2.25.75L19 19l-.75-2.25L16 16l2.25-.75L19 13z"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>'
+  ];
+
+  function wrapCountUpNumbers(text) {
+    if (!text) return '';
+    return text
+      .split(/(\d[\d.,]*)/g)
+      .map((part, index) => (index % 2 === 1
+        ? `<span class="count-up">${escapeHtml(part)}</span>`
+        : escapeHtml(part)))
+      .join('');
+  }
+
+  function resetCountUps(selectors) {
+    selectors.forEach((selector) => {
+      document.querySelectorAll(selector).forEach((el) => {
+        el.classList.add('count-up');
+        delete el.dataset.countDone;
+      });
+    });
+    window.PM_initCountUps?.();
+  }
+
+  function applyContent(data) {
+    if (!data) return;
+
+    const { general, urgencyBar, hero, course, modules, instructor, testimonials, offer, buttons } = data;
+
+    if (general?.siteOnline === false) {
+      document.body.innerHTML = '<div style="min-height:100vh;display:grid;place-items:center;background:#060a12;color:#f8fafc;font-family:Inter,sans-serif"><p>Site em manutenção. Volte em breve.</p></div>';
+      return;
+    }
+
+    if (general?.courseName) {
+      document.title = `${general.courseName} | Transforme Cortes de Futebol em Dólares`;
+    }
+    if (general?.favicon) {
+      const link = document.querySelector('link[rel="icon"]');
+      if (link) link.href = resolveMediaUrl(general.favicon);
+    }
+    if (buttons?.checkoutUrl && window.PM_CONFIG) {
+      window.PM_CONFIG.checkoutUrl = buttons.checkoutUrl;
+    }
+
+    setText(document.querySelector('[data-cms="urgency.badge"]'), urgencyBar?.badge);
+    if (urgencyBar?.text) {
+      setHtml(
+        document.querySelector('[data-cms="urgency.text"]'),
+        urgencyBar.text.replace(/vagas limitadas/i, '<strong>vagas limitadas</strong>')
+      );
+    }
+
+    const heroBadge = document.querySelector('[data-cms="hero.badge"]');
+    if (heroBadge && hero?.badge) {
+      heroBadge.innerHTML = `<span class="pulse-dot"></span>${escapeHtml(hero.badge)}`;
+    }
+
+    const titleLines = document.querySelectorAll('.hero__title-line');
+    if (titleLines[0]) applyHeroTitleLine(titleLines[0], hero?.titleLine1, hero?.titleAccent1, 'hero__title-accent--gold');
+    if (titleLines[1]) applyHeroTitleLine(titleLines[1], hero?.titleLine2, hero?.titleAccent2, 'hero__title-accent--green');
+
+    if (hero?.subtitle) {
+      setHtml(
+        document.querySelector('[data-cms="hero.subtitle"]'),
+        escapeHtml(hero.subtitle).replace(/1 hora por dia/g, '<strong>1 hora por dia</strong>')
+      );
+    }
+    setText(document.querySelector('[data-cms="hero.buttonText"]'), hero?.buttonText);
+    const heroBtn = document.querySelector('[data-cms="hero.buttonLink"]');
+    if (heroBtn) {
+      const heroCheckout = buttons?.checkoutUrl || window.PM_CONFIG?.checkoutUrl || hero?.buttonLink;
+      if (heroCheckout && !heroCheckout.startsWith('#')) heroBtn.href = heroCheckout;
+    }
+
+    if (hero?.videoId) {
+      const player = document.querySelector('vturb-smartplayer');
+      if (player) player.id = hero.videoId;
+    }
+
+    setTitleWithAccent(
+      document.querySelector('[data-cms="course.title"]'),
+      course?.title,
+      course?.titleAccent || 'Player Monetizado'
+    );
+    setText(document.querySelector('[data-cms="course.description"]'), course?.description);
+    setText(document.querySelector('[data-cms="course.extraText"]'), course?.extraText);
+    setText(document.querySelector('[data-cms="course.highlightTitle"]'), course?.highlightTitle);
+    setText(document.querySelector('[data-cms="course.highlightText"]'), course?.highlightText);
+    setText(document.querySelector('[data-cms="course.ctaText"]'), course?.ctaText);
+
+    const checkList = document.querySelector('[data-cms="course.items"]');
+    if (checkList && course?.items) {
+      checkList.innerHTML = course.items.map(item => `<li>${escapeHtml(item)}</li>`).join('');
+    }
+
+    setTitleWithAccent(
+      document.querySelector('[data-cms="modules.title"]'),
+      modules?.title,
+      modules?.titleAccent || 'aprender'
+    );
+    setText(document.querySelector('[data-cms="modules.subtitle"]'), modules?.subtitle);
+    const modulesGrid = document.querySelector('[data-cms="modules.grid"]');
+    if (modulesGrid && modules?.items) {
+      modulesGrid.innerHTML = modules.items.map((m, i) => `
+        <article class="module-card reveal">
+          <div class="module-card__number">${escapeHtml(m.number)}</div>
+          <div class="module-card__icon">${MODULE_ICONS[i % MODULE_ICONS.length]}</div>
+          <h3>${escapeHtml(m.name)}</h3>
+          <p>${escapeHtml(m.description)}</p>
+          <ul class="module-card__topics">${(m.topics || []).map(t => `<li>${escapeHtml(t)}</li>`).join('')}</ul>
+        </article>
+      `).join('');
+    }
+
+    setText(document.querySelector('[data-cms="instructor.name"]'), instructor?.name);
+    setText(document.querySelector('[data-cms="instructor.bio"]'), instructor?.bio);
+    setText(document.querySelector('[data-cms="instructor.bioExtra"]'), instructor?.bioExtra);
+    const instImg = document.querySelector('[data-cms="instructor.photo"]');
+    if (instImg && instructor?.photo) instImg.src = resolveMediaUrl(instructor.photo);
+    const instPhotoLink = document.querySelector('[data-cms="instructor.photoLink"]');
+    const instPhotoBubble = document.querySelector('[data-cms="instructor.photoBubble"]');
+    if (instPhotoLink && instructor?.instagramUrl) instPhotoLink.href = instructor.instagramUrl;
+    if (instPhotoBubble) instPhotoBubble.textContent = instructor?.instagram || '';
+    if (instPhotoLink && instructor?.name) {
+      instPhotoLink.setAttribute('aria-label', `Instagram de ${instructor.name}`);
+    }
+
+    const highlights = document.querySelector('[data-cms="instructor.highlights"]');
+    if (highlights && instructor?.highlights) {
+      highlights.innerHTML = instructor.highlights.map(h => `<li>${escapeHtml(h)}</li>`).join('');
+    }
+
+    setTitleWithAccent(
+      document.querySelector('[data-cms="testimonials.title"]'),
+      testimonials?.title,
+      testimonials?.titleAccent || 'dizem'
+    );
+    setText(document.querySelector('[data-cms="testimonials.subtitle"]'), testimonials?.subtitle);
+    setText(document.querySelector('[data-cms="testimonials.disclaimer"]'), testimonials?.disclaimer);
+    const track = document.querySelector('[data-cms="testimonials.grid"]');
+    if (track && testimonials?.items) {
+      const star = '<svg class="icon-star" viewBox="0 0 24 24" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>';
+      track.innerHTML = testimonials.items.map(t => `
+        <article class="testimonial-card glass-card reveal">
+          <header class="testimonial-card__header">
+            <img src="${escapeHtml(resolveMediaUrl(t.photo))}" alt="${escapeHtml(t.name)}" class="testimonial-card__avatar" width="56" height="56" loading="lazy">
+            <div class="testimonial-card__author">
+              <strong>${escapeHtml(t.name)}</strong>
+              <span>${wrapCountUpNumbers(t.tagline)}</span>
+            </div>
+          </header>
+          <div class="testimonial-card__stars" aria-label="5 estrelas">${star.repeat(5)}</div>
+          <p>"${wrapCountUpNumbers(t.text)}"</p>
+        </article>
+      `).join('');
+    }
+
+    setText(document.querySelector('[data-cms="offer.productName"]'), offer?.productName);
+    setText(document.querySelector('[data-cms="offer.productSubtitle"]'), offer?.productSubtitle);
+    setText(document.querySelector('[data-cms="offer.badge"]'), offer?.badge);
+    setText(document.querySelector('[data-cms="offer.installments"]'), offer?.installments);
+    if (offer?.currentPrice) {
+      const price = String(offer.currentPrice).startsWith('R$') ? offer.currentPrice : `R$ ${offer.currentPrice}`;
+      setText(document.querySelector('[data-cms="offer.currentPrice"]'), `${price} à vista`);
+    }
+    setText(document.querySelector('[data-cms="offer.guaranteeText"]'), offer?.guaranteeText);
+    setText(document.querySelector('[data-cms="offer.urgencyText"]'), offer?.urgencyText);
+    setText(document.querySelector('[data-cms="offer.stickyPrice"]'), offer?.stickyPrice || offer?.installments);
+
+    const bonusGrid = document.querySelector('[data-cms="offer.bonuses"]');
+    if (bonusGrid && offer?.bonuses) {
+      bonusGrid.innerHTML = offer.bonuses.map((b, i) => `
+        <article class="bonus-card reveal">
+          <div class="bonus-card__value">${escapeHtml(b.value)}</div>
+          <div class="bonus-card__icon">${BONUS_ICONS[i % BONUS_ICONS.length]}</div>
+          <h3>${escapeHtml(b.title)}</h3>
+          <p>${escapeHtml(b.description)}</p>
+        </article>
+      `).join('');
+    }
+
+    const checkoutUrl = buttons?.checkoutUrl || window.PM_CONFIG?.checkoutUrl || '';
+    const btnColor = buttons?.buttonColor || '#10b981';
+
+    setText(document.querySelector('[data-cms="buttons.checkoutText"]'), buttons?.checkoutText);
+    setText(document.querySelector('[data-cms="buttons.headerCta"]'), buttons?.headerCtaText);
+    setText(document.querySelector('[data-cms="buttons.stickyCta"]'), buttons?.stickyCtaText);
+    setText(document.querySelector('[data-cms="buttons.finalCta"]'), buttons?.finalCtaText);
+
+    setAll('.checkout-link', el => {
+      if (checkoutUrl) el.href = checkoutUrl;
+      if (btnColor) el.style.setProperty('--btn-custom', btnColor);
+    });
+
+    if (btnColor) {
+      document.documentElement.style.setProperty('--accent-green', btnColor);
+    }
+
+    resetCountUps(['#resultados .count-up']);
+  }
+
+  loadContent()
+    .then(applyContent)
+    .finally(() => {
+      window.__cmsReady = true;
+      window.dispatchEvent(new CustomEvent('cms:applied'));
+    });
+})();

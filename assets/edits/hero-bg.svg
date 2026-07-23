@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none">
+  <defs>
+    <linearGradient id="hero-bg" x1="960" y1="0" x2="960" y2="1080" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0a1628"/>
+      <stop offset=".5" stop-color="#060a12"/>
+      <stop offset="1" stop-color="#060a12"/>
+    </linearGradient>
+    <radialGradient id="hero-glow-green" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(400 300) rotate(90) scale(500)">
+      <stop stop-color="#10b981" stop-opacity=".25"/>
+      <stop offset="1" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="hero-glow-gold" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1500 700) rotate(90) scale(400)">
+      <stop stop-color="#fbbf24" stop-opacity=".15"/>
+      <stop offset="1" stop-color="#fbbf24" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#hero-bg)"/>
+  <rect width="1920" height="1080" fill="url(#hero-glow-green)"/>
+  <rect width="1920" height="1080" fill="url(#hero-glow-gold)"/>
+  <ellipse cx="960" cy="900" rx="700" ry="120" fill="#10b981" fill-opacity=".08"/>
+  <path d="M960 200 L960 880" stroke="#10b981" stroke-opacity=".06" stroke-width="2" stroke-dasharray="8 16"/>
+  <circle cx="960" cy="540" r="280" stroke="#10b981" stroke-opacity=".04" stroke-width="1" fill="none"/>
+  <circle cx="960" cy="540" r="180" stroke="#fbbf24" stroke-opacity=".04" stroke-width="1" fill="none"/>
+</svg>

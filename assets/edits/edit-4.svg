@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" fill="none">
+  <defs>
+    <linearGradient id="g4" x1="0" y1="320" x2="360" y2="320" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#059669"/>
+      <stop offset="1" stop-color="#060a12"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="640" fill="#060a12"/>
+  <rect x="16" y="32" width="328" height="520" rx="16" fill="url(#g4)" fill-opacity=".3" stroke="rgba(16,185,129,.35)" stroke-width="2"/>
+  <rect x="32" y="48" width="296" height="4" rx="2" fill="#10b981"/>
+  <text x="180" y="300" text-anchor="middle" fill="#f8fafc" font-family="system-ui,sans-serif" font-size="18" font-weight="700">DRIBLA</text>
+  <text x="180" y="330" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="12">Gancho de 3 segundos</text>
+  <text x="180" y="560" text-anchor="middle" fill="#fcd34d" font-family="system-ui,sans-serif" font-size="13" font-weight="600">560K views</text>
+  <circle cx="180" cy="240" r="36" fill="rgba(255,255,255,.9)"/>
+  <polygon points="172,225 172,255 198,240" fill="#060a12"/>
+</svg>

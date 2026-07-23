@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 640" fill="none">
+  <rect width="360" height="640" fill="#1a2234"/>
+  <rect x="20" y="40" width="320" height="480" rx="12" fill="#0f1520" stroke="#334155" stroke-width="2"/>
+  <rect x="40" y="80" width="280" height="160" fill="#1e293b"/>
+  <text x="180" y="165" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="14">Lance sem edição</text>
+  <rect x="40" y="260" width="200" height="12" rx="4" fill="#334155"/>
+  <rect x="40" y="284" width="160" height="8" rx="4" fill="#1e293b"/>
+  <rect x="40" y="520" width="80" height="24" rx="4" fill="#475569"/>
+  <text x="180" y="600" text-anchor="middle" fill="#94a3b8" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Corte básico · 230 views</text>
+</svg>
