@@ -21,9 +21,18 @@
   --save-bar-h: 72px;
   --card-gradient: linear-gradient(to top left, rgba(16, 185, 129, 0.14), var(--bg-card) 58%);
   --card-gradient-hover: linear-gradient(to top left, rgba(16, 185, 129, 0.2), var(--bg-card-hover) 58%);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
 
 body {
   font-family: var(--font);
@@ -31,6 +40,7 @@ body {
   color: var(--text);
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 button, input, textarea { font: inherit; }
@@ -174,7 +184,11 @@ button, input, textarea { font: inherit; }
 .brand-logo__text strong { color: var(--primary); }
 
 /* ── Shell ── */
-.admin-shell { display: flex; min-height: 100vh; }
+.admin-shell {
+  display: flex;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
 
 .admin-sidebar {
   width: var(--sidebar-w);
@@ -189,10 +203,20 @@ button, input, textarea { font: inherit; }
 }
 
 .sidebar-toggle,
-.sidebar-edge-toggle,
 .sidebar-close-btn,
 .sidebar-backdrop {
   display: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.sidebar-toggle {
+  position: relative;
+  z-index: 120;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  flex-shrink: 0;
 }
 
 .sidebar-close-btn {
@@ -305,12 +329,21 @@ button, input, textarea { font: inherit; }
 .admin-user strong { display: block; font-size: .8rem; }
 .admin-user small { color: var(--text-muted); font-size: .7rem; }
 
+.admin-build-id {
+  margin-top: .65rem;
+  font-size: .65rem;
+  color: var(--text-muted);
+  text-align: center;
+  opacity: .75;
+}
+
 .admin-main {
   flex: 1;
   margin-left: var(--sidebar-w);
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .admin-topbar {
@@ -345,7 +378,8 @@ button, input, textarea { font: inherit; }
   bottom: 0;
   left: var(--sidebar-w);
   right: 0;
-  height: var(--save-bar-h);
+  min-height: var(--save-bar-h);
+  padding-bottom: var(--safe-bottom);
   background: rgba(18, 23, 31, .96);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -546,6 +580,13 @@ button, input, textarea { font: inherit; }
 .btn:disabled { opacity: .45; cursor: not-allowed; transform: none !important; }
 
 .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0 1rem; }
+.form-grid .field--full { grid-column: 1 / -1; }
+
+.field--switch {
+  margin-top: .5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
 
 
 
